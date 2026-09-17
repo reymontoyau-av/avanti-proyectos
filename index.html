@@ -1093,7 +1093,9 @@
         if(e.deltaMode === 1) amount *= 18;
         else if(e.deltaMode === 2) amount *= window.innerHeight;
         // 10% más lento que el scroll normal de la página, no más.
-        window.scrollBy({ top: amount * 0.9, left: 0 });
+        // behavior:'auto' evita que el scroll-behavior:smooth global anime
+        // cada micro-movimiento (eso era lo que se sentía extremadamente lento).
+        window.scrollBy({ top: amount * 0.9, left: 0, behavior: 'auto' });
       }
     }, { passive: false });
 
