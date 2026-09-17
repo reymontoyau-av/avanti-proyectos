@@ -728,7 +728,7 @@
         <img class="reveal-img" data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
         <img class="reveal-img" data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
         <img class="reveal-img proj-start" data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
-        <img class="reveal-img proj-start" data-project="Urapanes de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
+        <img class="reveal-img proj-start" data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
         <img class="reveal-img proj-start" data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
         <div class="proj-gallery-spacer" aria-hidden="true"></div>
       </div>
@@ -1019,21 +1019,24 @@
       lastScrollLeft = sl;
     }, { passive: true });
 
-    var visible = new Set();
+    // El título solo debe seguir a las fotos completamente nítidas (mismo
+    // umbral que usa el difuminado de los costados), nunca a las que solo
+    // se asoman en fade a la izquierda o a la derecha.
+    var SHARP_RATIO = 0.92;
+    var ratios = new Map();
     var observer2 = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
-        if(entry.isIntersecting) visible.add(entry.target);
-        else visible.delete(entry.target);
+        ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
       });
-      if(!visible.size) return;
-      var visibleImgs = imgs.filter(function(img){ return visible.has(img); });
+      var sharpImgs = imgs.filter(function(img){ return (ratios.get(img) || 0) >= SHARP_RATIO; });
+      if(!sharpImgs.length) return; // en plena transición: conserva el título actual
       var target;
       if(scrollDir === 1){
-        target = visibleImgs[visibleImgs.length - 1];
+        target = sharpImgs[sharpImgs.length - 1];
       } else if(scrollDir === -1){
-        target = visibleImgs[0];
+        target = sharpImgs[0];
       } else {
-        target = visibleImgs[0];
+        target = sharpImgs[0];
       }
       setCaption(target);
     }, { root: gallery, threshold: thresholds });
