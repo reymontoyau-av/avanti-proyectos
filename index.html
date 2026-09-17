@@ -369,21 +369,27 @@
   }
   .lightbox.active{ display:flex; flex-direction:column; }
   .lightbox img{
-    max-width:100%; max-height:calc(100% - 56px);
+    max-width:100%; max-height:calc(100% - 92px);
     width:auto; height:auto;
     object-fit:contain;
     box-shadow:0 20px 60px rgba(0,0,0,.5);
   }
-  .lightbox-title{
+  .lightbox-caption{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    margin-top:16px;
+  }
+  .lightbox-caption h3{
     color:#fff;
     font-family:'Questrial', 'Poppins', sans-serif;
     font-weight:700;
     font-size:18px;
     text-align:center;
-    margin-bottom:14px;
+    margin:0;
   }
+  .lightbox-caption .proj-meta{ color:var(--slate-300); }
   @media (max-width:640px){
-    .lightbox-title{ font-size:16px; margin-bottom:10px; }
+    .lightbox-caption{ margin-top:10px; }
+    .lightbox-caption h3{ font-size:16px; }
   }
   .lightbox-close{
     position:fixed;
@@ -873,8 +879,11 @@
   <div class="lightbox-close" id="lightboxClose">&times;</div>
   <div class="lightbox-arrow lightbox-prev" id="lightboxPrev">&#8249;</div>
   <div class="lightbox-arrow lightbox-next" id="lightboxNext">&#8250;</div>
-  <div class="lightbox-title" id="lightboxTitle"></div>
   <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption">
+    <h3 id="lightboxTitle"></h3>
+    <div class="proj-meta" id="lightboxMeta"></div>
+  </div>
   <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
@@ -887,6 +896,7 @@
     var nextBtn = document.getElementById('lightboxNext');
     var counter = document.getElementById('lightboxCounter');
     var titleEl = document.getElementById('lightboxTitle');
+    var metaEl = document.getElementById('lightboxMeta');
 
     var currentImages = [];
     var currentIndex = 0;
@@ -899,6 +909,8 @@
       lightboxImg.alt = img.alt;
       counter.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
       titleEl.textContent = img.dataset.project || img.alt || '';
+      var parts = (img.dataset.info || '').split('·').map(function(s){ return s.trim(); }).filter(Boolean);
+      metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
     function openLightbox(img){
@@ -995,15 +1007,36 @@
     var thresholds = [];
     for(var t = 0; t <= 20; t++){ thresholds.push(t / 20); }
 
+    // Detecta la dirección del desplazamiento para saber si el título debe
+    // adelantarse al proyecto que asoma a la derecha (avance) o retroceder
+    // al que reaparece a la izquierda (retroceso).
+    var lastScrollLeft = gallery.scrollLeft;
+    var scrollDir = 0;
+    gallery.addEventListener('scroll', function(){
+      var sl = gallery.scrollLeft;
+      if(sl > lastScrollLeft) scrollDir = 1;
+      else if(sl < lastScrollLeft) scrollDir = -1;
+      lastScrollLeft = sl;
+    }, { passive: true });
+
+    var visible = new Set();
     var observer2 = new IntersectionObserver(function(entries){
-      var best = null;
       entries.forEach(function(entry){
-        if(entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)){
-          best = entry;
-        }
+        if(entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
       });
-      if(best) setCaption(best.target);
-    }, { root: gallery, rootMargin: '0px -35% 0px -35%', threshold: thresholds });
+      if(!visible.size) return;
+      var visibleImgs = imgs.filter(function(img){ return visible.has(img); });
+      var target;
+      if(scrollDir === 1){
+        target = visibleImgs[visibleImgs.length - 1];
+      } else if(scrollDir === -1){
+        target = visibleImgs[0];
+      } else {
+        target = visibleImgs[0];
+      }
+      setCaption(target);
+    }, { root: gallery, threshold: thresholds });
 
     imgs.forEach(function(img){ observer2.observe(img); });
     if(imgs.length) setCaption(imgs[0]);
