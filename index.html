@@ -1080,6 +1080,52 @@
     }
     if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
     if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
+
+    // Arrastre manual del carrusel: fuerza que la foto solo se desplace en
+    // horizontal, sin permitir ningún movimiento vertical mientras se
+    // presiona y arrastra (ni con mouse ni con el dedo).
+    var isDragging = false;
+    var dragMoved = false;
+    var dragStartX = 0;
+    var scrollAtStart = 0;
+
+    gallery.addEventListener('mousedown', function(e){
+      isDragging = true;
+      dragMoved = false;
+      dragStartX = e.pageX;
+      scrollAtStart = gallery.scrollLeft;
+    });
+    window.addEventListener('mousemove', function(e){
+      if(!isDragging) return;
+      var dx = e.pageX - dragStartX;
+      if(Math.abs(dx) > 3) dragMoved = true;
+      gallery.scrollLeft = scrollAtStart - dx;
+    });
+    window.addEventListener('mouseup', function(){ isDragging = false; });
+    gallery.addEventListener('click', function(e){
+      if(dragMoved){ e.stopPropagation(); e.preventDefault(); }
+      dragMoved = false;
+    }, true);
+
+    var touchStartX = 0, touchStartY = 0, touchScrollStart = 0, touchAxis = null;
+    gallery.addEventListener('touchstart', function(e){
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchScrollStart = gallery.scrollLeft;
+      touchAxis = null;
+    }, { passive: true });
+    gallery.addEventListener('touchmove', function(e){
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      if(touchAxis === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)){
+        touchAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+      if(touchAxis === 'x'){
+        e.preventDefault();
+        gallery.scrollLeft = touchScrollStart - dx;
+      }
+      // si el gesto es vertical, se deja pasar para no bloquear el scroll de la página
+    }, { passive: false });
   })();
 </script>
 
