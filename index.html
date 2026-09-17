@@ -283,7 +283,6 @@
     scroll-snap-type:x proximity;
     padding:0 10%;
     box-sizing:border-box;
-    touch-action:pan-x;
   }
   .proj-gallery::-webkit-scrollbar{ height:5px; }
   .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
@@ -1110,24 +1109,32 @@
       }
     }, { passive: false });
 
-    // "touch-action: pan-x" en el carrusel hace que las fotos ya no se
-    // muevan verticalmente al arrastrar (correcto), pero como consecuencia
-    // el navegador deja de mover la página cuando el gesto táctil es
-    // vertical, porque ese eje quedó restringido en este elemento. Para
-    // recuperar el scroll de la página con el dedo, se reenvía manualmente
-    // el componente vertical del gesto a la ventana; el componente
-    // horizontal lo sigue manejando el navegador de forma nativa.
-    var lastTouchY = null;
+    // En vez de restringir el elemento con touch-action (eso frenaba el
+    // scroll vertical de la página), se detecta con JS hacia qué lado va el
+    // gesto apenas empieza: si es horizontal, el carrusel toma el control
+    // total (nada de scroll nativo, para que la foto no se mueva ni un
+    // pixel en vertical); si es vertical, no se toca nada y la página se
+    // desplaza de forma 100% nativa (igual de rápida que en el resto del
+    // sitio).
+    var touchStartX = 0, touchStartY = 0, touchAxis = null, touchScrollStart = 0;
     gallery.addEventListener('touchstart', function(e){
-      lastTouchY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchScrollStart = gallery.scrollLeft;
+      touchAxis = null;
     }, { passive: true });
     gallery.addEventListener('touchmove', function(e){
-      if(lastTouchY === null) return;
-      var currentY = e.touches[0].clientY;
-      window.scrollBy(0, lastTouchY - currentY);
-      lastTouchY = currentY;
-    }, { passive: true });
-    gallery.addEventListener('touchend', function(){ lastTouchY = null; });
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      if(touchAxis === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)){
+        touchAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+      if(touchAxis === 'x'){
+        e.preventDefault();
+        gallery.scrollLeft = touchScrollStart - dx;
+      }
+      // si es 'y' (o aún no se determina), no se hace nada: scroll nativo de la página.
+    }, { passive: false });
   })();
 </script>
 
