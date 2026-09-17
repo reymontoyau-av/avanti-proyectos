@@ -283,6 +283,7 @@
     scroll-snap-type:x proximity;
     padding:0 10%;
     box-sizing:border-box;
+    touch-action:pan-x;
   }
   .proj-gallery::-webkit-scrollbar{ height:5px; }
   .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
@@ -1076,6 +1077,17 @@
     }
     if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
     if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
+
+    // Al no tener espacio vertical propio, un contenedor de scroll horizontal
+    // suele "robar" la rueda del mouse/trackpad y convertir el gesto vertical
+    // en desplazamiento horizontal de las fotos. Se evita: si el gesto es
+    // mayormente vertical, se deja que la PÁGINA se desplace, no el carrusel.
+    gallery.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+        e.preventDefault();
+        window.scrollBy({ top: e.deltaY, left: 0 });
+      }
+    }, { passive: false });
   })();
 </script>
 
