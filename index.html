@@ -1085,7 +1085,15 @@
     gallery.addEventListener('wheel', function(e){
       if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
         e.preventDefault();
-        window.scrollBy({ top: e.deltaY, left: 0 });
+        // deltaY viene en distintas unidades según el dispositivo: píxeles
+        // (trackpad, deltaMode 0), líneas (muchos mouse físicos, deltaMode 1)
+        // o páginas (deltaMode 2). Sin esta conversión, el scroll con un
+        // mouse de líneas queda extremadamente lento.
+        var amount = e.deltaY;
+        if(e.deltaMode === 1) amount *= 18;
+        else if(e.deltaMode === 2) amount *= window.innerHeight;
+        // 10% más lento que el scroll normal de la página, no más.
+        window.scrollBy({ top: amount * 0.9, left: 0 });
       }
     }, { passive: false });
 
