@@ -1082,6 +1082,8 @@
     // suele "robar" la rueda del mouse/trackpad y convertir el gesto vertical
     // en desplazamiento horizontal de las fotos. Se evita: si el gesto es
     // mayormente vertical, se deja que la PÁGINA se desplace, no el carrusel.
+    var wheelPending = 0;
+    var wheelTicking = false;
     gallery.addEventListener('wheel', function(e){
       if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
         e.preventDefault();
@@ -1093,9 +1095,18 @@
         if(e.deltaMode === 1) amount *= 18;
         else if(e.deltaMode === 2) amount *= window.innerHeight;
         // 10% más lento que el scroll normal de la página, no más.
-        // behavior:'auto' evita que el scroll-behavior:smooth global anime
-        // cada micro-movimiento (eso era lo que se sentía extremadamente lento).
-        window.scrollBy({ top: amount * 0.9, left: 0, behavior: 'auto' });
+        wheelPending += amount * 0.9;
+        // Se agrupan los eventos por frame (en vez de mover la página en cada
+        // micro-evento de la rueda) para que el desplazamiento sea fluido y
+        // no se sienta entrecortado/lento.
+        if(!wheelTicking){
+          wheelTicking = true;
+          requestAnimationFrame(function(){
+            window.scrollBy({ top: wheelPending, left: 0, behavior: 'auto' });
+            wheelPending = 0;
+            wheelTicking = false;
+          });
+        }
       }
     }, { passive: false });
 
