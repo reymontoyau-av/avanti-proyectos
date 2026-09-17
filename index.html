@@ -1095,24 +1095,33 @@
         opacityObserver.observe(clone);
       }
       if(!cloneImgs.length) return;
-      var realFirst = imgs.slice(0, firstProjectCount); // Torres Makalú reales, mismo orden que los clones
 
-      // El salto se dispara con el mismo criterio que ya usamos para saber
-      // qué foto está "nítida" (completamente centrada/visible): en cuanto
-      // una clonada llega a ese punto, el navegador ya terminó de asentarse
-      // ahí (gracias al scroll-snap), así que el salto no compite con nada.
-      var loopObserver = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.intersectionRatio < SHARP_RATIO) return;
-          var idx = cloneImgs.indexOf(entry.target);
-          if(idx === -1) return;
-          var real = realFirst[idx];
-          var clone = cloneImgs[idx];
-          var shift = clone.offsetLeft - real.offsetLeft;
-          gallery.scrollLeft -= shift;
-        });
-      }, { root: gallery, threshold: thresholds });
-      cloneImgs.forEach(function(clone){ loopObserver.observe(clone); });
+      // Disparar el salto por "punto exacto donde la foto queda nítida"
+      // falla con gestos rápidos/con impulso en el celular, porque ese punto
+      // intermedio se puede saltar entre un evento y otro. En cambio, tocar
+      // el límite absoluto del scroll es infalible: el navegador SIEMPRE
+      // detiene ahí el scrollLeft, sin importar la velocidad del gesto.
+      var shift = null;
+      function computeShift(){
+        shift = cloneImgs[0].offsetLeft - imgs[0].offsetLeft;
+      }
+      function nearMaxScroll(){
+        return gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 40;
+      }
+      if(document.readyState === 'complete') computeShift();
+      else window.addEventListener('load', computeShift);
+      window.addEventListener('resize', computeShift);
+
+      var settleTimer = null;
+      gallery.addEventListener('scroll', function(){
+        if(shift === null) computeShift();
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(function(){
+          if(nearMaxScroll()){
+            gallery.scrollLeft -= shift;
+          }
+        }, 100);
+      }, { passive: true });
     })();
 
     // Al no tener espacio vertical propio, un contenedor de scroll horizontal
