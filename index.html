@@ -280,9 +280,11 @@
     display:flex; gap:7px;
     align-items:center;
     overflow-x:auto;
+    overflow-y:hidden;
     scroll-snap-type:x proximity;
     padding:0 10%;
     box-sizing:border-box;
+    touch-action:pan-x;
   }
   .proj-gallery::-webkit-scrollbar{ height:5px; }
   .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
@@ -297,6 +299,10 @@
     box-sizing:border-box;
     cursor:zoom-in;
     transition:opacity .2s ease;
+    -webkit-user-drag:none;
+    user-select:none;
+    touch-action:pan-x;
+    pointer-events:auto;
   }
   .proj-gallery img:active{ opacity:.85 !important; }
   .proj-gallery img.proj-start{ margin-left:26px; }
@@ -999,6 +1005,13 @@
 
     var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
     var current = null;
+
+    // Evita que el navegador arrastre la imagen como "drag" nativo, lo cual
+    // se veía como si la foto se moviera hacia arriba y abajo al presionarla.
+    imgs.forEach(function(img){
+      img.setAttribute('draggable', 'false');
+      img.addEventListener('dragstart', function(e){ e.preventDefault(); });
+    });
 
     function setCaption(img){
       if(!img || img === current) return;
