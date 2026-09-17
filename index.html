@@ -280,25 +280,47 @@
     display:flex; gap:7px;
     overflow-x:auto;
     scroll-snap-type:x proximity;
-    justify-content:center;
-    justify-content:safe center;
   }
   .proj-gallery::-webkit-scrollbar{ height:5px; }
   .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
   .proj-gallery img{
-    height:195px; width:auto; max-width:none;
-    flex:0 0 auto;
+    height:260px;
+    flex:0 0 41.6%;
     scroll-snap-align:start;
     object-fit:cover;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:zoom-in;
-    transition:opacity .15s ease;
+    transition:opacity .2s ease;
   }
-  .proj-gallery img:active{ opacity:.85; }
+  .proj-gallery img:active{ opacity:.85 !important; }
   .proj-gallery img.proj-start{ margin-left:20px; }
-  @media (max-width:640px){ .proj-gallery img.proj-start{ margin-left:14px; } }
+  .proj-gallery-spacer{ flex:0 0 auto; width:55vw; }
+  @media (max-width:640px){
+    .proj-gallery img.proj-start{ margin-left:14px; }
+    .proj-gallery-spacer{ width:60vw; }
+  }
+  .proj-arrow{
+    position:absolute;
+    top:50%; transform:translateY(-50%);
+    width:38px; height:38px;
+    border-radius:50%;
+    background:rgba(255,255,255,.14);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.35);
+    font-size:19px;
+    line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    z-index:5;
+  }
+  .proj-arrow:active{ background:rgba(255,255,255,.28); }
+  .proj-arrow-prev{ left:8px; }
+  .proj-arrow-next{ right:8px; }
+  @media (max-width:640px){
+    .proj-arrow{ width:32px; height:32px; font-size:16px; }
+  }
   .proj-caption{
     display:flex;
     flex-direction:column;
@@ -330,7 +352,7 @@
   .proj-meta b{ color:#fff; font-weight:500; white-space:nowrap; }
   @media (max-width:640px){
     .proj-gallery-band{ padding:10px 20px 10px; }
-    .proj-gallery img{ height:150px; }
+    .proj-gallery img{ height:200px; }
     .proj-caption{ left:20px; right:20px; bottom:10px; padding:22px 10px 8px; }
   }
 
@@ -345,12 +367,23 @@
     box-sizing:border-box;
     cursor:zoom-out;
   }
-  .lightbox.active{ display:flex; }
+  .lightbox.active{ display:flex; flex-direction:column; }
   .lightbox img{
-    max-width:100%; max-height:100%;
+    max-width:100%; max-height:calc(100% - 56px);
     width:auto; height:auto;
     object-fit:contain;
     box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .lightbox-title{
+    color:#fff;
+    font-family:'Questrial', 'Poppins', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  @media (max-width:640px){
+    .lightbox-title{ font-size:16px; margin-bottom:10px; }
   }
   .lightbox-close{
     position:fixed;
@@ -691,7 +724,10 @@
         <img class="reveal-img proj-start" data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
         <img class="reveal-img proj-start" data-project="Urapanes de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
         <img class="reveal-img proj-start" data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
+        <div class="proj-gallery-spacer" aria-hidden="true"></div>
       </div>
+      <button type="button" class="proj-arrow proj-arrow-prev" id="megaPrev" aria-label="Proyecto anterior">&#8249;</button>
+      <button type="button" class="proj-arrow proj-arrow-next" id="megaNext" aria-label="Siguiente proyecto">&#8250;</button>
       <div class="proj-caption reveal" id="megaCaption">
         <h3 id="megaTitle">Torres Makalú</h3>
         <div class="proj-meta" id="megaMeta"><span>210 apartamentos</span><span>Constructora A&amp;C</span></div>
@@ -837,6 +873,7 @@
   <div class="lightbox-close" id="lightboxClose">&times;</div>
   <div class="lightbox-arrow lightbox-prev" id="lightboxPrev">&#8249;</div>
   <div class="lightbox-arrow lightbox-next" id="lightboxNext">&#8250;</div>
+  <div class="lightbox-title" id="lightboxTitle"></div>
   <img id="lightboxImg" src="" alt="">
   <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
@@ -849,6 +886,7 @@
     var prevBtn = document.getElementById('lightboxPrev');
     var nextBtn = document.getElementById('lightboxNext');
     var counter = document.getElementById('lightboxCounter');
+    var titleEl = document.getElementById('lightboxTitle');
 
     var currentImages = [];
     var currentIndex = 0;
@@ -860,6 +898,7 @@
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt;
       counter.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
+      titleEl.textContent = img.dataset.project || img.alt || '';
     }
 
     function openLightbox(img){
@@ -968,6 +1007,26 @@
 
     imgs.forEach(function(img){ observer2.observe(img); });
     if(imgs.length) setCaption(imgs[0]);
+
+    // Difumina las fotos que solo se asoman a los lados (nítidas las que
+    // están completamente visibles), y controla las flechas de navegación.
+    var opacityObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var ratio = entry.intersectionRatio;
+        var opacity = ratio >= 0.92 ? 1 : Math.max(0.32, 0.28 + ratio * 0.75);
+        entry.target.style.opacity = opacity.toFixed(2);
+      });
+    }, { root: gallery, threshold: thresholds });
+    imgs.forEach(function(img){ opacityObserver.observe(img); });
+
+    var prevBtn = document.getElementById('megaPrev');
+    var nextBtn = document.getElementById('megaNext');
+    function scrollByStep(dir){
+      var step = (imgs[0] ? imgs[0].getBoundingClientRect().width : gallery.clientWidth * 0.4) + 7;
+      gallery.scrollBy({ left: dir * step, behavior: 'smooth' });
+    }
+    if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
+    if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
   })();
 </script>
 
