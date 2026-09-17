@@ -1077,6 +1077,44 @@
     if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
     if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
 
+    // Carrusel infinito: se clonan las fotos del primer proyecto (Torres
+    // Makalú) y se agregan al final. Cuando el usuario llega a esas fotos
+    // clonadas, se salta al instante (sin animación) a las fotos reales
+    // equivalentes del principio — como son idénticas, el salto es
+    // imperceptible y da la sensación de un carrusel sin fin.
+    (function setupInfiniteLoop(){
+      var firstProjectCount = 4; // Torres Makalú tiene 4 fotos
+      var cloneImgs = [];
+      for(var i = 0; i < firstProjectCount && i < imgs.length; i++){
+        var clone = imgs[i].cloneNode(true);
+        clone.classList.add('in-view'); // que se vea de inmediato, sin animación de aparición
+        gallery.appendChild(clone);
+        cloneImgs.push(clone);
+        imgs.push(clone); // para que el título/opacidad también las reconozcan
+        observer2.observe(clone);
+        opacityObserver.observe(clone);
+      }
+      if(!cloneImgs.length) return;
+      var realFirst = imgs.slice(0, firstProjectCount); // Torres Makalú reales, mismo orden que los clones
+
+      // El salto se dispara con el mismo criterio que ya usamos para saber
+      // qué foto está "nítida" (completamente centrada/visible): en cuanto
+      // una clonada llega a ese punto, el navegador ya terminó de asentarse
+      // ahí (gracias al scroll-snap), así que el salto no compite con nada.
+      var loopObserver = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.intersectionRatio < SHARP_RATIO) return;
+          var idx = cloneImgs.indexOf(entry.target);
+          if(idx === -1) return;
+          var real = realFirst[idx];
+          var clone = cloneImgs[idx];
+          var shift = clone.offsetLeft - real.offsetLeft;
+          gallery.scrollLeft -= shift;
+        });
+      }, { root: gallery, threshold: thresholds });
+      cloneImgs.forEach(function(clone){ loopObserver.observe(clone); });
+    })();
+
     // Al no tener espacio vertical propio, un contenedor de scroll horizontal
     // suele "robar" la rueda del mouse/trackpad y convertir el gesto vertical
     // en desplazamiento horizontal de las fotos. Se evita: si el gesto es
