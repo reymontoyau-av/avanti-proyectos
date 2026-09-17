@@ -1109,32 +1109,12 @@
       }
     }, { passive: false });
 
-    // En vez de restringir el elemento con touch-action (eso frenaba el
-    // scroll vertical de la página), se detecta con JS hacia qué lado va el
-    // gesto apenas empieza: si es horizontal, el carrusel toma el control
-    // total (nada de scroll nativo, para que la foto no se mueva ni un
-    // pixel en vertical); si es vertical, no se toca nada y la página se
-    // desplaza de forma 100% nativa (igual de rápida que en el resto del
-    // sitio).
-    var touchStartX = 0, touchStartY = 0, touchAxis = null, touchScrollStart = 0;
-    gallery.addEventListener('touchstart', function(e){
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchScrollStart = gallery.scrollLeft;
-      touchAxis = null;
-    }, { passive: true });
-    gallery.addEventListener('touchmove', function(e){
-      var dx = e.touches[0].clientX - touchStartX;
-      var dy = e.touches[0].clientY - touchStartY;
-      if(touchAxis === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)){
-        touchAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      }
-      if(touchAxis === 'x'){
-        e.preventDefault();
-        gallery.scrollLeft = touchScrollStart - dx;
-      }
-      // si es 'y' (o aún no se determina), no se hace nada: scroll nativo de la página.
-    }, { passive: false });
+    // En el celular no se intercepta el touch en absoluto: el carrusel se
+    // desplaza horizontalmente de forma nativa (overflow-x + scroll-snap) y
+    // la página se desplaza verticalmente de forma nativa también. Es el
+    // propio navegador quien decide, gesto a gesto, hacia cuál de los dos
+    // lados va el dedo — sin JavaScript de por medio, sin lentitud y sin
+    // conflicto. Las flechas cubren la navegación por toque/clic.
   })();
 </script>
 
