@@ -289,27 +289,30 @@
   .proj-gallery::-webkit-scrollbar{ height:5px; }
   .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
   .proj-gallery img{
-    width:100%;
-    height:auto;
+    height:480px;
+    width:auto;
     display:block;
-    flex:0 0 80%;
+    flex:0 0 auto;
     scroll-snap-align:center;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:zoom-in;
-    transition:opacity .2s ease;
+    transform:scale(1);
+    transform-origin:center;
+    transition:opacity .2s ease, transform .25s ease;
     -webkit-user-drag:none;
     user-select:none;
     touch-action:pan-x;
     pointer-events:auto;
   }
+  .proj-gallery img.is-side{ transform:scale(0.9); }
   .proj-gallery img:active{ opacity:.85 !important; }
   .proj-gallery img.proj-start{ margin-left:26px; }
   .proj-gallery-spacer{ display:none; }
   @media (max-width:640px){
     .proj-gallery{ padding:0 10%; }
-    .proj-gallery img{ flex-basis:80%; }
+    .proj-gallery img{ height:340px; }
     .proj-gallery img.proj-start{ margin-left:18px; }
   }
   .proj-arrow{
@@ -1068,6 +1071,7 @@
         var ratio = entry.intersectionRatio;
         var opacity = ratio >= 0.92 ? 1 : Math.max(0.32, 0.28 + ratio * 0.75);
         entry.target.style.opacity = opacity.toFixed(2);
+        entry.target.classList.toggle('is-side', ratio < 0.92);
       });
     }, { root: gallery, threshold: thresholds });
     imgs.forEach(function(img){ opacityObserver.observe(img); });
