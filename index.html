@@ -1088,6 +1088,25 @@
         window.scrollBy({ top: e.deltaY, left: 0 });
       }
     }, { passive: false });
+
+    // "touch-action: pan-x" en el carrusel hace que las fotos ya no se
+    // muevan verticalmente al arrastrar (correcto), pero como consecuencia
+    // el navegador deja de mover la página cuando el gesto táctil es
+    // vertical, porque ese eje quedó restringido en este elemento. Para
+    // recuperar el scroll de la página con el dedo, se reenvía manualmente
+    // el componente vertical del gesto a la ventana; el componente
+    // horizontal lo sigue manejando el navegador de forma nativa.
+    var lastTouchY = null;
+    gallery.addEventListener('touchstart', function(e){
+      lastTouchY = e.touches[0].clientY;
+    }, { passive: true });
+    gallery.addEventListener('touchmove', function(e){
+      if(lastTouchY === null) return;
+      var currentY = e.touches[0].clientY;
+      window.scrollBy(0, lastTouchY - currentY);
+      lastTouchY = currentY;
+    }, { passive: true });
+    gallery.addEventListener('touchend', function(){ lastTouchY = null; });
   })();
 </script>
 
