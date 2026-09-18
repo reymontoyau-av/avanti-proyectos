@@ -448,32 +448,78 @@
     .proj-meta{ font-size:11px; gap:10px; }
   }
 
-  .more-projects{ margin-top:0; }
-  .more-projects-head{
-    font-size:13.5px; color:var(--slate-500);
-    padding:6px 0 4px;
+
+  /* ---------- PROYECTOS EN DESARROLLO (carrusel secundario, 2 fotos visibles) ---------- */
+  .dev-projects-head{
+    padding-top:14px;
+    margin-top:6px;
     border-top:1px solid var(--line);
   }
-  .more-row{
+  .dev-projects-head .sec-tag{ margin:0; }
+  .dev-gallery-band{
+    width:100vw;
+    position:relative;
+    left:50%;
+    margin-left:-50vw;
+    margin-top:12px;
+    background:linear-gradient(90deg, var(--navy-950) 0%, var(--navy-800) 70%, var(--azul-suave) 100%);
+    padding:10px 26px 10px;
+    box-sizing:border-box;
+  }
+  .dev-gallery{
+    display:flex; gap:7px;
+    align-items:center;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    padding:0 8%;
+    box-sizing:border-box;
+  }
+  .dev-gallery::-webkit-scrollbar{ height:5px; }
+  .dev-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
+  .dev-gallery img{
+    height:300px;
+    width:auto;
+    display:block;
+    flex:0 0 42%;
+    object-fit:cover;
+    scroll-snap-align:center;
+    border:1px solid #fff;
+    border-radius:0;
+    box-sizing:border-box;
+    cursor:default;
+    transition:opacity .2s ease;
+    -webkit-user-drag:none;
+    user-select:none;
+  }
+  .dev-gallery img.dev-start{ margin-left:22px; }
+  @media (max-width:640px){
+    .dev-gallery{ padding:0 12%; }
+    .dev-gallery img{ height:220px; flex-basis:70%; }
+    .dev-gallery img.dev-start{ margin-left:16px; }
+    .dev-gallery-band{ padding:10px 20px 10px; }
+  }
+  .dev-caption{
     display:flex;
     flex-direction:column;
+    align-items:center;
+    text-align:center;
     gap:3px;
-    padding:7px 0;
-    border-top:1px solid var(--line);
+    position:absolute;
+    left:26px; right:26px; bottom:10px;
+    padding:24px 14px 8px;
+    background:linear-gradient(180deg, rgba(20,30,50,0) 0%, rgba(20,30,50,.5) 42%, rgba(20,30,50,.92) 100%);
+    pointer-events:none;
   }
-  .more-row .m-name{
-    font-size:15px;
+  .dev-caption h3{
+    font-size:16px;
     font-weight:700;
-    color:var(--ink);
+    color:#fff;
+    margin:0;
+    text-shadow:0 1px 6px rgba(0,0,0,.35);
+    text-wrap:balance;
   }
-  .more-row .m-info{
-    display:flex; gap:14px; flex-wrap:nowrap;
-    font-size:12.5px;
-    color:var(--slate-500);
-  }
-  .more-row .m-info span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  @media (max-width:480px){
-    .more-row .m-info{ font-size:11px; gap:10px; }
+  @media (max-width:640px){
+    .dev-caption{ left:18px; right:18px; bottom:8px; padding:18px 10px 6px; }
   }
 
   /* ---------- ABOUT ---------- */
@@ -627,6 +673,10 @@
   .proj-gallery img.reveal-img:nth-child(3){ transition-delay:.16s; }
   .proj-gallery img.reveal-img:nth-child(4){ transition-delay:.24s; }
   .proj-caption.reveal{ transition-delay:.15s; }
+  .dev-gallery img.reveal-img:nth-child(2){ transition-delay:.08s; }
+  .dev-gallery img.reveal-img:nth-child(3){ transition-delay:.16s; }
+  .dev-gallery img.reveal-img:nth-child(4){ transition-delay:.24s; }
+  .dev-caption.reveal{ transition-delay:.15s; }
   .foot-grid > div.reveal:nth-child(2){ transition-delay:.1s; }
   .foot-grid > div.reveal:nth-child(3){ transition-delay:.2s; }
 
@@ -746,14 +796,30 @@
       </div>
     </div>
 
-    <div class="more-projects reveal">
-      <div class="more-projects-head">Otros proyectos diseñados</div>
-      <div class="more-row"><div class="m-name">Nüa</div><div class="m-info"><span>102 apartamentos</span><span>Constructora Pranha Urbano</span></div></div>
-      <div class="more-row"><div class="m-name">Torre Vita</div><div class="m-info"><span>64 apartamentos</span><span>Constructora A&amp;C</span></div></div>
-      <div class="more-row"><div class="m-name">Bellagio</div><div class="m-info"><span>192 apartamentos</span><span>Constructora A&amp;C</span></div></div>
-      <div class="more-row"><div class="m-name">Bonanza</div><div class="m-info"><span>288 apartamentos</span><span>Constructora JYP</span></div></div>
-      <div class="more-row"><div class="m-name">Entreguaduas</div><div class="m-info"><span>760 apartamentos</span><span>Constructora JYP</span></div></div>
-      <div class="more-row" style="border-bottom:1px solid var(--line);"><div class="m-name">Altos de Palogrande</div><div class="m-info"><span>64 apartamentos</span><span>Constructora A&amp;C</span></div></div>
+    <div class="dev-projects-head reveal">
+      <div class="sec-tag">Proyectos en Desarrollo</div>
+    </div>
+    <div class="dev-gallery-band reveal">
+      <div class="dev-gallery" id="devGallery">
+        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
+        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
+        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
+        <img class="reveal-img dev-start" data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
+        <img class="reveal-img" data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
+        <img class="reveal-img dev-start" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
+        <img class="reveal-img" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
+        <img class="reveal-img" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
+        <img class="reveal-img dev-start" data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
+        <img class="reveal-img" data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
+        <img class="reveal-img dev-start" data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
+        <img class="reveal-img dev-start" data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
+      </div>
+      <button type="button" class="proj-arrow proj-arrow-prev" id="devPrev" aria-label="Proyecto anterior">&#8249;</button>
+      <button type="button" class="proj-arrow proj-arrow-next" id="devNext" aria-label="Siguiente proyecto">&#8250;</button>
+      <div class="dev-caption reveal" id="devCaption">
+        <h3 id="devTitle">Bellagio</h3>
+        <div class="proj-meta" id="devMeta"><span>192 apartamentos</span><span>Constructora A&amp;C</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1167,6 +1233,149 @@
 
 <script>
   (function(){
+    // Carrusel de "Proyectos en Desarrollo": mismo comportamiento del
+    // carrusel principal (título/datos que cambian, fade en los costados,
+    // flechas), pero sin abrir zoom al tocar la foto.
+    var gallery = document.getElementById('devGallery');
+    var titleEl = document.getElementById('devTitle');
+    var metaEl = document.getElementById('devMeta');
+    if(!gallery || !titleEl || !metaEl || !('IntersectionObserver' in window)) return;
+
+    var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
+    var current = null;
+
+    imgs.forEach(function(img){
+      img.setAttribute('draggable', 'false');
+      img.addEventListener('dragstart', function(e){ e.preventDefault(); });
+    });
+
+    function setCaption(img){
+      if(!img || img === current) return;
+      current = img;
+      titleEl.textContent = img.dataset.project || '';
+      var parts = (img.dataset.info || '').split('·').map(function(s){ return s.trim(); }).filter(Boolean);
+      metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
+    }
+
+    var thresholds = [];
+    for(var t = 0; t <= 20; t++){ thresholds.push(t / 20); }
+
+    var lastScrollLeft = gallery.scrollLeft;
+    var scrollDir = 0;
+    gallery.addEventListener('scroll', function(){
+      var sl = gallery.scrollLeft;
+      if(sl > lastScrollLeft) scrollDir = 1;
+      else if(sl < lastScrollLeft) scrollDir = -1;
+      lastScrollLeft = sl;
+    }, { passive: true });
+
+    var SHARP_RATIO = 0.92;
+    var ratios = new Map();
+    var observer2 = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+      });
+      var sharpImgs = imgs.filter(function(img){ return (ratios.get(img) || 0) >= SHARP_RATIO; });
+      if(!sharpImgs.length) return;
+      var target;
+      if(scrollDir === 1){
+        target = sharpImgs[sharpImgs.length - 1];
+      } else if(scrollDir === -1){
+        target = sharpImgs[0];
+      } else {
+        target = sharpImgs[0];
+      }
+      setCaption(target);
+    }, { root: gallery, threshold: thresholds });
+
+    imgs.forEach(function(img){ observer2.observe(img); });
+    if(imgs.length) setCaption(imgs[0]);
+
+    var opacityObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var ratio = entry.intersectionRatio;
+        var opacity = ratio >= 0.92 ? 1 : Math.max(0.32, 0.28 + ratio * 0.75);
+        entry.target.style.opacity = opacity.toFixed(2);
+      });
+    }, { root: gallery, threshold: thresholds });
+    imgs.forEach(function(img){ opacityObserver.observe(img); });
+
+    var prevBtn = document.getElementById('devPrev');
+    var nextBtn = document.getElementById('devNext');
+    function scrollByStep(dir){
+      var step = (imgs[0] ? imgs[0].getBoundingClientRect().width : gallery.clientWidth * 0.4) + 7;
+      gallery.scrollBy({ left: dir * step, behavior: 'smooth' });
+    }
+    if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
+    if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
+
+    // Carrusel infinito: igual que el principal, se clonan las fotos del
+    // primer proyecto (Bellagio) y se agregan al final; al llegar al límite
+    // absoluto del scroll se salta sin animación a las fotos reales
+    // equivalentes del inicio.
+    (function setupInfiniteLoop(){
+      var firstProjectCount = 3; // Bellagio tiene 3 fotos
+      var cloneImgs = [];
+      for(var i = 0; i < firstProjectCount && i < imgs.length; i++){
+        var clone = imgs[i].cloneNode(true);
+        clone.classList.add('in-view');
+        gallery.appendChild(clone);
+        cloneImgs.push(clone);
+        imgs.push(clone);
+        observer2.observe(clone);
+        opacityObserver.observe(clone);
+      }
+      if(!cloneImgs.length) return;
+
+      var shift = null;
+      function computeShift(){
+        shift = cloneImgs[0].offsetLeft - imgs[0].offsetLeft;
+      }
+      function nearMaxScroll(){
+        return gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 40;
+      }
+      if(document.readyState === 'complete') computeShift();
+      else window.addEventListener('load', computeShift);
+      window.addEventListener('resize', computeShift);
+
+      var settleTimer = null;
+      gallery.addEventListener('scroll', function(){
+        if(shift === null) computeShift();
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(function(){
+          if(nearMaxScroll()){
+            gallery.scrollLeft -= shift;
+          }
+        }, 100);
+      }, { passive: true });
+    })();
+
+    var wheelPending = 0;
+    var wheelTicking = false;
+    gallery.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+        e.preventDefault();
+        var amount = e.deltaY;
+        if(e.deltaMode === 1) amount *= 18;
+        else if(e.deltaMode === 2) amount *= window.innerHeight;
+        wheelPending += amount * 0.9;
+        if(!wheelTicking){
+          wheelTicking = true;
+          requestAnimationFrame(function(){
+            window.scrollBy({ top: wheelPending, left: 0, behavior: 'auto' });
+            wheelPending = 0;
+            wheelTicking = false;
+          });
+        }
+      }
+    }, { passive: false });
+
+    // Sin listener de click/tap: a propósito, este carrusel no abre zoom.
+  })();
+</script>
+
+<script>
+  (function(){
     // Fondo del hero: carrusel de fotos de proyectos con crossfade + zoom lento (efecto tipo ivs.tv)
     var imgs = document.querySelectorAll('#heroBg .hero-bg-img');
     if(!imgs.length) return;
@@ -1188,7 +1397,7 @@
   (function(){
     // Evita que un título termine con una sola palabra suelta: une las
     // últimas dos palabras con un espacio irrompible para que bajen juntas.
-    var selectors = '.sec-head h2, .cta h2, .approach-card h3, .service-row h3, .proj-caption h3, .about-grid p';
+    var selectors = '.sec-head h2, .cta h2, .approach-card h3, .service-row h3, .proj-caption h3, .dev-caption h3, .about-grid p';
     document.querySelectorAll(selectors).forEach(function(el){
       var words = el.textContent.trim().split(/\s+/);
       if(words.length < 3) return;
