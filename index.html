@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avanti Proyectos — Arquitectura y desarrollo inmobiliario</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -283,39 +283,40 @@
     overflow:hidden;
     box-sizing:border-box;
   }
-  .proj-gallery img{
-    position:absolute;
-    top:0; left:50%;
+  .proj-track{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:14px;
+    height:100%;
+    transition:transform .9s ease;
+    will-change:transform;
+  }
+  .proj-track img{
     height:100%;
     width:auto;
     aspect-ratio:4 / 5;
     display:block;
+    flex:0 0 auto;
     object-fit:cover;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:zoom-in;
-    opacity:0;
-    transform:translateX(calc(-50% + 48px));
-    transition:opacity 1s ease, transform 1s ease;
+    opacity:.35;
+    transition:opacity .6s ease;
     pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
   }
-  .proj-gallery img.active{
+  .proj-track img.active{
     opacity:1;
-    transform:translateX(-50%);
-    z-index:2;
     pointer-events:auto;
-  }
-  .proj-gallery img.prevshown{
-    opacity:0;
-    transform:translateX(calc(-50% - 48px));
-    z-index:1;
   }
   @media (max-width:640px){
     .proj-gallery{ height:420px; }
     .proj-gallery-band{ padding:10px 0; }
+    .proj-track{ gap:10px; }
   }
   .proj-caption{
     display:flex;
@@ -699,7 +700,7 @@
 
 <header class="nav">
   <div class="wrap">
-    <div class="brand"><img src="logo-white.webp" alt="Avanti"></div>
+    <div class="brand"><img src="assets/logo-white.webp" alt="Avanti"></div>
     <span class="brand-text"><b>Avanti</b><span>Proyectos</span></span>
     <div class="nav-right">
       <nav class="links">
@@ -715,15 +716,15 @@
 
 <section class="hero">
   <div class="hero-bg" id="heroBg">
-    <img class="hero-bg-img" src="torres-makalu-1.jpg" alt="">
-    <img class="hero-bg-img" src="torre-40-2.jpg" alt="">
-    <img class="hero-bg-img" src="arboleda-del-campin-1.jpg" alt="">
-    <img class="hero-bg-img" src="reserva-campestre-1.jpg" alt="">
-    <img class="hero-bg-img" src="cipres-de-bella-suiza-2.jpg" alt="">
-    <img class="hero-bg-img" src="robles-de-bella-suiza-1.jpg" alt="">
-    <img class="hero-bg-img" src="urapanes-de-bella-suiza-1.jpg" alt="">
-    <img class="hero-bg-img" src="mirador-de-estambul-1.jpg" alt="">
-    <img class="hero-bg-img" src="torres-makalu-3.jpg" alt="">
+    <img class="hero-bg-img" src="assets/torres-makalu-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/torre-40-2.jpg" alt="">
+    <img class="hero-bg-img" src="assets/arboleda-del-campin-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/reserva-campestre-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/cipres-de-bella-suiza-2.jpg" alt="">
+    <img class="hero-bg-img" src="assets/robles-de-bella-suiza-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/urapanes-de-bella-suiza-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/mirador-de-estambul-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/torres-makalu-3.jpg" alt="">
   </div>
   <div class="hero-grid"></div>
   <div class="wrap">
@@ -758,24 +759,26 @@
 
     <div class="proj-gallery-band reveal">
       <div class="proj-gallery" id="megaGallery">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-1.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-2.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-3.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-4.jpg" alt="Torres Makalú">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-1.jpg" alt="Torre 40">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-2.jpg" alt="Torre 40">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-3.jpg" alt="Torre 40">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-1.jpg" alt="Arboleda del Campín">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-2.jpg" alt="Arboleda del Campín">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-3.jpg" alt="Arboleda del Campín">
-        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-1.jpg" alt="Reserva Campestre">
-        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-2.jpg" alt="Reserva Campestre">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-1.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
-        <img data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
-        <img data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
+        <div class="proj-track" id="megaTrack">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-1.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-2.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-3.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-4.jpg" alt="Torres Makalú">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-1.jpg" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-2.jpg" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-3.jpg" alt="Torre 40">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-1.jpg" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-2.jpg" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-3.jpg" alt="Arboleda del Campín">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/reserva-campestre-1.jpg" alt="Reserva Campestre">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/reserva-campestre-2.jpg" alt="Reserva Campestre">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-1.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="assets/robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
+        <img data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="assets/urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
+        <img data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="assets/mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
+        </div>
       </div>
       <div class="proj-caption reveal" id="megaCaption">
         <h3 id="megaTitle">Torres Makalú</h3>
@@ -789,18 +792,18 @@
     <div class="dev-gallery-band reveal">
       <div class="dev-gallery" id="devGallery">
         <div class="dev-track" id="devTrack">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
-          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
-          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
-          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
-          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-1.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-2.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-3.jpg" alt="Bellagio">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-1.jpg" alt="Nüa">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-2.jpg" alt="Nüa">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-1.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-2.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-3.jpg" alt="Solana Living">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="assets/torre-vita-1.jpg" alt="Torre Vita">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="assets/torre-vita-2.jpg" alt="Torre Vita">
+          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-1.jpg" alt="Bonanza">
+          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/entreguaduas-1.jpg" alt="Entreguaduas">
         </div>
       </div>
       <div class="dev-caption reveal" id="devCaption">
@@ -907,7 +910,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="reveal">
-        <img src="logo-white.webp" alt="Avanti Proyectos" style="height:46px; width:auto; margin-bottom:12px;">
+        <img src="assets/logo-white.webp" alt="Avanti Proyectos" style="height:46px; width:auto; margin-bottom:12px;">
         <p style="max-width:320px; color:var(--slate-500);">Arquitectura y desarrollo inmobiliario en Manizales, Caldas, Colombia.</p>
       </div>
       <div class="reveal">
@@ -974,7 +977,9 @@
 
     function openLightbox(img){
       var gallery = img.closest('.proj-gallery');
-      currentImages = Array.prototype.slice.call(gallery.querySelectorAll('img'));
+      currentImages = Array.prototype.slice.call(gallery.querySelectorAll('img')).filter(function(el){
+        return !el.classList.contains('proj-clone');
+      });
       currentIndex = currentImages.indexOf(img);
       showImage(currentIndex);
       lightbox.classList.add('active');
@@ -1045,21 +1050,35 @@
 
 <script>
   (function(){
-    // Carrusel único de proyectos: automático, en loop, una foto visible a
-    // la vez (entra deslizándose desde la derecha con fundido, sale hacia
-    // la izquierda). El título y los datos cambian junto con la foto activa.
+    // Carrusel único de proyectos: mismo mecanismo del carrusel de
+    // "Proyectos en Desarrollo" (tira de fotos en fila que se desliza),
+    // pero mostrando una sola foto activa a la vez, con la anterior y la
+    // siguiente asomando en fade a los lados. Automático, en loop, con la
+    // altura ya asignada a este carrusel (sin cambios de tamaño de foto).
     var gallery = document.getElementById('megaGallery');
+    var track = document.getElementById('megaTrack');
     var titleEl = document.getElementById('megaTitle');
     var metaEl = document.getElementById('megaMeta');
-    if(!gallery || !titleEl || !metaEl) return;
+    if(!gallery || !track || !titleEl || !metaEl) return;
 
-    var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
-    if(!imgs.length) return;
+    var imgs = Array.prototype.slice.call(track.querySelectorAll('img'));
+    var n = imgs.length;
+    if(!n) return;
 
     imgs.forEach(function(img){
       img.setAttribute('draggable', 'false');
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
+
+    // Clona la primera foto y la agrega al final, para que al llegar ahí
+    // el salto de vuelta al inicio sea imperceptible: carrusel sin fin.
+    var CLONE_COUNT = Math.min(1, n);
+    for(var c = 0; c < CLONE_COUNT; c++){
+      var clone = imgs[c].cloneNode(true);
+      clone.classList.add('proj-clone');
+      track.appendChild(clone);
+      imgs.push(clone);
+    }
 
     function setCaption(img){
       titleEl.textContent = img.dataset.project || '';
@@ -1068,44 +1087,53 @@
     }
 
     var activeIndex = 0;
-    var prevIndex = null;
-    function render(){
+
+    function render(instant){
       imgs.forEach(function(img, i){
-        img.classList.remove('active', 'prevshown');
-        if(i === activeIndex){
-          img.classList.add('active');
-        } else if(i === prevIndex){
-          // Solo la que se acaba de mostrar sale hacia la izquierda; el
-          // resto queda a la espera a la derecha (posición inicial por CSS),
-          // para que toda foto nueva entre siempre desde la derecha.
-          img.classList.add('prevshown');
-        }
+        img.classList.toggle('active', i === activeIndex);
       });
       setCaption(imgs[activeIndex]);
+
+      var active = imgs[activeIndex];
+      var offset = active.offsetLeft + active.offsetWidth / 2 - gallery.clientWidth / 2;
+
+      if(instant){
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(' + (-offset) + 'px)';
+        void track.offsetWidth; // fuerza reflow antes de reactivar la transición
+        track.style.transition = '';
+      } else {
+        track.style.transform = 'translateX(' + (-offset) + 'px)';
+      }
     }
-    render();
+    render(true);
 
     var AUTOPLAY_MS = 4200;
-    var timer = setInterval(function(){
-      prevIndex = activeIndex;
-      activeIndex = (activeIndex + 1) % imgs.length;
-      render();
-    }, AUTOPLAY_MS);
+    function tick(){
+      activeIndex++;
+      render(false);
+      if(activeIndex === n){
+        // La foto mostrada ahora (clon) es visualmente idéntica a la
+        // primera real: al terminar la transición, se reinicia el índice
+        // sin animación, sin que se note el salto.
+        setTimeout(function(){
+          activeIndex = 0;
+          render(true);
+        }, 900);
+      }
+    }
+    var timer = setInterval(tick, AUTOPLAY_MS);
+
+    window.addEventListener('resize', function(){ render(true); });
 
     // Pausa el avance automático mientras el lightbox está abierto, para no
     // cambiar de foto bajo el usuario mientras la está viendo en detalle.
     var lightboxEl = document.getElementById('lightbox');
     if(lightboxEl){
       var mo = new MutationObserver(function(){
-        if(lightboxEl.classList.contains('active')){
-          clearInterval(timer);
-        } else {
-          clearInterval(timer);
-          timer = setInterval(function(){
-            prevIndex = activeIndex;
-            activeIndex = (activeIndex + 1) % imgs.length;
-            render();
-          }, AUTOPLAY_MS);
+        clearInterval(timer);
+        if(!lightboxEl.classList.contains('active')){
+          timer = setInterval(tick, AUTOPLAY_MS);
         }
       });
       mo.observe(lightboxEl, { attributes: true, attributeFilter: ['class'] });
