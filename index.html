@@ -1069,11 +1069,18 @@
     }
 
     var activeIndex = 0;
+    var prevIndex = null;
     function render(){
       imgs.forEach(function(img, i){
         img.classList.remove('active', 'prevshown');
-        if(i === activeIndex) img.classList.add('active');
-        else img.classList.add('prevshown');
+        if(i === activeIndex){
+          img.classList.add('active');
+        } else if(i === prevIndex){
+          // Solo la que se acaba de mostrar sale hacia la izquierda; el
+          // resto queda a la espera a la derecha (posición inicial por CSS),
+          // para que toda foto nueva entre siempre desde la derecha.
+          img.classList.add('prevshown');
+        }
       });
       setCaption(imgs[activeIndex]);
     }
@@ -1081,6 +1088,7 @@
 
     var AUTOPLAY_MS = 4200;
     var timer = setInterval(function(){
+      prevIndex = activeIndex;
       activeIndex = (activeIndex + 1) % imgs.length;
       render();
     }, AUTOPLAY_MS);
@@ -1095,6 +1103,7 @@
         } else {
           clearInterval(timer);
           timer = setInterval(function(){
+            prevIndex = activeIndex;
             activeIndex = (activeIndex + 1) % imgs.length;
             render();
           }, AUTOPLAY_MS);
