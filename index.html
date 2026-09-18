@@ -459,37 +459,39 @@
   .dev-gallery{
     position:relative;
     width:100%;
-    height:340px;
+    height:360px;
     overflow:hidden;
     box-sizing:border-box;
   }
-  .dev-gallery img{
-    position:absolute;
-    top:0;
-    width:46%;
+  .dev-track{
+    display:flex;
+    align-items:stretch;
+    gap:14px;
     height:100%;
-    left:27%;
+    transition:transform .9s ease;
+    will-change:transform;
+  }
+  .dev-track img{
+    height:100%;
+    aspect-ratio:4 / 5;
+    width:auto;
     display:block;
+    flex:0 0 auto;
     object-fit:cover;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:default;
-    opacity:0;
-    transform:scale(.92);
-    transition:opacity .9s ease, left .9s ease, transform .9s ease;
+    opacity:.35;
+    transition:opacity .6s ease;
     pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
   }
-  .dev-gallery img.active{ opacity:1; left:27%; transform:scale(1); z-index:3; }
-  .dev-gallery img.prev{ opacity:.42; left:-21%; transform:scale(.92); z-index:2; }
-  .dev-gallery img.next{ opacity:.42; left:75%; transform:scale(.92); z-index:2; }
+  .dev-track img.active{ opacity:1; }
   @media (max-width:640px){
-    .dev-gallery{ height:230px; }
-    .dev-gallery img{ width:70%; left:15%; }
-    .dev-gallery img.prev{ left:-58%; }
-    .dev-gallery img.next{ left:88%; }
+    .dev-gallery{ height:260px; }
+    .dev-track{ gap:10px; }
     .dev-gallery-band{ padding:10px 0; }
   }
   .dev-caption{
@@ -787,18 +789,20 @@
     </div>
     <div class="dev-gallery-band reveal">
       <div class="dev-gallery" id="devGallery">
-        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
-        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
-        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
-        <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
-        <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
-        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
-        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
-        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
-        <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
-        <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
-        <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
-        <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
+        <div class="dev-track" id="devTrack">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
+          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
+          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
+        </div>
       </div>
       <div class="dev-caption reveal" id="devCaption">
         <h3 id="devTitle">Bellagio</h3>
@@ -1103,21 +1107,34 @@
 
 <script>
   (function(){
-    // Carrusel de "Proyectos en Desarrollo": automático, en loop, muestra la
-    // foto activa al centro y la anterior/siguiente en fade a los lados. Sin
-    // flechas ni zoom al tocar.
+    // Carrusel de "Proyectos en Desarrollo": automático, en loop, muestra
+    // SIEMPRE dos fotos completas (proporción 4:5 real) avanzando de a una,
+    // con la anterior/siguiente asomando en fade a los lados. Sin flechas
+    // ni zoom al tocar.
     var gallery = document.getElementById('devGallery');
+    var track = document.getElementById('devTrack');
     var titleEl = document.getElementById('devTitle');
     var metaEl = document.getElementById('devMeta');
-    if(!gallery || !titleEl || !metaEl) return;
+    if(!gallery || !track || !titleEl || !metaEl) return;
 
-    var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
-    if(!imgs.length) return;
+    var imgs = Array.prototype.slice.call(track.querySelectorAll('img'));
+    var n = imgs.length;
+    if(!n) return;
 
     imgs.forEach(function(img){
       img.setAttribute('draggable', 'false');
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
+
+    // Clona las primeras 2 fotos y las agrega al final, para que la pareja
+    // (última, primera-clonada) se vea igual que (primera, segunda) real y
+    // el salto de vuelta al inicio sea imperceptible: carrusel sin fin.
+    var CLONE_COUNT = Math.min(2, n);
+    for(var c = 0; c < CLONE_COUNT; c++){
+      var clone = imgs[c].cloneNode(true);
+      track.appendChild(clone);
+      imgs.push(clone);
+    }
 
     function setCaption(img){
       titleEl.textContent = img.dataset.project || '';
@@ -1125,24 +1142,46 @@
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
-    var n = imgs.length;
     var activeIndex = 0;
-    function render(){
+
+    function render(instant){
       imgs.forEach(function(img, i){
-        img.classList.remove('active', 'prev', 'next');
-        var diff = (i - activeIndex + n) % n;
-        if(diff === 0) img.classList.add('active');
-        else if(diff === 1) img.classList.add('next');
-        else if(diff === n - 1) img.classList.add('prev');
+        img.classList.toggle('active', i === activeIndex || i === activeIndex + 1);
       });
       setCaption(imgs[activeIndex]);
+
+      var left = imgs[activeIndex];
+      var right = imgs[activeIndex + 1] || left;
+      var pairStart = left.offsetLeft;
+      var pairEnd = right.offsetLeft + right.offsetWidth;
+      var offset = pairStart - (gallery.clientWidth - (pairEnd - pairStart)) / 2;
+
+      if(instant){
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(' + (-offset) + 'px)';
+        void track.offsetWidth; // fuerza reflow antes de reactivar la transición
+        track.style.transition = '';
+      } else {
+        track.style.transform = 'translateX(' + (-offset) + 'px)';
+      }
     }
-    render();
+    render(true);
 
     setInterval(function(){
-      activeIndex = (activeIndex + 1) % n;
-      render();
+      activeIndex++;
+      render(false);
+      if(activeIndex === n){
+        // La pareja mostrada ahora (clones) es visualmente idéntica a la
+        // pareja real del inicio: al terminar la transición, se reinicia
+        // el índice sin animación, sin que se note el salto.
+        setTimeout(function(){
+          activeIndex = 0;
+          render(true);
+        }, 900);
+      }
     }, 4200);
+
+    window.addEventListener('resize', function(){ render(true); });
 
     // Sin listener de click/tap ni flechas: a propósito, este carrusel
     // avanza solo y no abre zoom.
