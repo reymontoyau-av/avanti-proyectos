@@ -273,60 +273,50 @@
     left:50%;
     margin-left:-50vw;
     background:linear-gradient(90deg, var(--navy-950) 0%, var(--navy-800) 70%, var(--azul-suave) 100%);
-    padding:12px 32px 12px;
+    padding:14px 0;
     box-sizing:border-box;
   }
   .proj-gallery{
-    display:flex; gap:7px;
-    align-items:center;
-    overflow-x:auto;
-    scroll-snap-type:x proximity;
-    padding:0 10%;
+    position:relative;
+    width:100%;
+    height:620px;
+    overflow:hidden;
+    padding:0 32px;
     box-sizing:border-box;
   }
-  .proj-gallery::-webkit-scrollbar{ height:5px; }
-  .proj-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
   .proj-gallery img{
-    height:480px;
-    width:auto;
+    position:absolute;
+    top:0; left:32px;
+    width:calc(100% - 64px);
+    height:100%;
     display:block;
-    flex:0 0 auto;
-    scroll-snap-align:center;
+    object-fit:cover;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:zoom-in;
-    transition:opacity .2s ease;
+    opacity:0;
+    transform:translateX(48px);
+    transition:opacity 1s ease, transform 1s ease;
+    pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
   }
-  .proj-gallery img:active{ opacity:.85 !important; }
-  .proj-gallery img.proj-start{ margin-left:26px; }
-  .proj-gallery-spacer{ display:none; }
-  @media (max-width:640px){
-    .proj-gallery{ padding:0 10%; }
-    .proj-gallery img{ height:340px; }
-    .proj-gallery img.proj-start{ margin-left:18px; }
+  .proj-gallery img.active{
+    opacity:1;
+    transform:translateX(0);
+    z-index:2;
+    pointer-events:auto;
   }
-  .proj-arrow{
-    position:absolute;
-    top:50%; transform:translateY(-50%);
-    width:38px; height:38px;
-    border-radius:50%;
-    background:rgba(255,255,255,.14);
-    color:#fff;
-    border:1px solid rgba(255,255,255,.35);
-    font-size:19px;
-    line-height:1;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    z-index:5;
+  .proj-gallery img.prevshown{
+    opacity:0;
+    transform:translateX(-48px);
+    z-index:1;
   }
-  .proj-arrow:active{ background:rgba(255,255,255,.28); }
-  .proj-arrow-prev{ left:8px; }
-  .proj-arrow-next{ right:8px; }
   @media (max-width:640px){
-    .proj-arrow{ width:32px; height:32px; font-size:16px; }
+    .proj-gallery{ height:420px; padding:0 20px; }
+    .proj-gallery img{ left:20px; width:calc(100% - 40px); }
+    .proj-gallery-band{ padding:10px 0; }
   }
   .proj-caption{
     display:flex;
@@ -339,6 +329,7 @@
     padding:28px 14px 10px;
     background:linear-gradient(180deg, rgba(20,30,50,0) 0%, rgba(20,30,50,.5) 42%, rgba(20,30,50,.92) 100%);
     pointer-events:none;
+    z-index:5;
   }
   .proj-caption h3{
     font-size:18px;
@@ -358,7 +349,6 @@
   .proj-meta span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .proj-meta b{ color:#fff; font-weight:500; white-space:nowrap; }
   @media (max-width:640px){
-    .proj-gallery-band{ padding:10px 20px 10px; }
     .proj-caption{ left:20px; right:20px; bottom:10px; padding:22px 10px 8px; }
   }
 
@@ -463,40 +453,44 @@
     margin-left:-50vw;
     margin-top:12px;
     background:linear-gradient(90deg, var(--navy-950) 0%, var(--navy-800) 70%, var(--azul-suave) 100%);
-    padding:10px 26px 10px;
+    padding:10px 0;
     box-sizing:border-box;
   }
   .dev-gallery{
-    display:flex; gap:7px;
-    align-items:center;
-    overflow-x:auto;
-    scroll-snap-type:x proximity;
-    padding:0 8%;
+    position:relative;
+    width:100%;
+    height:340px;
+    overflow:hidden;
     box-sizing:border-box;
   }
-  .dev-gallery::-webkit-scrollbar{ height:5px; }
-  .dev-gallery::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.3); }
   .dev-gallery img{
-    height:300px;
-    width:auto;
+    position:absolute;
+    top:0;
+    width:46%;
+    height:100%;
+    left:27%;
     display:block;
-    flex:0 0 42%;
     object-fit:cover;
-    scroll-snap-align:center;
     border:1px solid #fff;
     border-radius:0;
     box-sizing:border-box;
     cursor:default;
-    transition:opacity .2s ease;
+    opacity:0;
+    transform:scale(.92);
+    transition:opacity .9s ease, left .9s ease, transform .9s ease;
+    pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
   }
-  .dev-gallery img.dev-start{ margin-left:22px; }
+  .dev-gallery img.active{ opacity:1; left:27%; transform:scale(1); z-index:3; }
+  .dev-gallery img.prev{ opacity:.42; left:-21%; transform:scale(.92); z-index:2; }
+  .dev-gallery img.next{ opacity:.42; left:75%; transform:scale(.92); z-index:2; }
   @media (max-width:640px){
-    .dev-gallery{ padding:0 12%; }
-    .dev-gallery img{ height:220px; flex-basis:70%; }
-    .dev-gallery img.dev-start{ margin-left:16px; }
-    .dev-gallery-band{ padding:10px 20px 10px; }
+    .dev-gallery{ height:230px; }
+    .dev-gallery img{ width:70%; left:15%; }
+    .dev-gallery img.prev{ left:-58%; }
+    .dev-gallery img.next{ left:88%; }
+    .dev-gallery-band{ padding:10px 0; }
   }
   .dev-caption{
     display:flex;
@@ -508,6 +502,7 @@
     left:26px; right:26px; bottom:10px;
     padding:24px 14px 8px;
     background:linear-gradient(180deg, rgba(20,30,50,0) 0%, rgba(20,30,50,.5) 42%, rgba(20,30,50,.92) 100%);
+    z-index:5;
     pointer-events:none;
   }
   .dev-caption h3{
@@ -669,13 +664,7 @@
   .service-list .service-row.reveal:nth-child(2){ transition-delay:.08s; }
   .service-list .service-row.reveal:nth-child(3){ transition-delay:.16s; }
   .service-list .service-row.reveal:nth-child(4){ transition-delay:.24s; }
-  .proj-gallery img.reveal-img:nth-child(2){ transition-delay:.08s; }
-  .proj-gallery img.reveal-img:nth-child(3){ transition-delay:.16s; }
-  .proj-gallery img.reveal-img:nth-child(4){ transition-delay:.24s; }
   .proj-caption.reveal{ transition-delay:.15s; }
-  .dev-gallery img.reveal-img:nth-child(2){ transition-delay:.08s; }
-  .dev-gallery img.reveal-img:nth-child(3){ transition-delay:.16s; }
-  .dev-gallery img.reveal-img:nth-child(4){ transition-delay:.24s; }
   .dev-caption.reveal{ transition-delay:.15s; }
   .foot-grid > div.reveal:nth-child(2){ transition-delay:.1s; }
   .foot-grid > div.reveal:nth-child(3){ transition-delay:.2s; }
@@ -768,28 +757,25 @@
 
     <div class="proj-gallery-band reveal">
       <div class="proj-gallery" id="megaGallery">
-        <img class="reveal-img" data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-1.jpg" alt="Torres Makalú">
-        <img class="reveal-img" data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-2.jpg" alt="Torres Makalú">
-        <img class="reveal-img" data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-3.jpg" alt="Torres Makalú">
-        <img class="reveal-img" data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-4.jpg" alt="Torres Makalú">
-        <img class="reveal-img proj-start" data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-1.jpg" alt="Torre 40">
-        <img class="reveal-img" data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-2.jpg" alt="Torre 40">
-        <img class="reveal-img" data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-3.jpg" alt="Torre 40">
-        <img class="reveal-img proj-start" data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-1.jpg" alt="Arboleda del Campín">
-        <img class="reveal-img" data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-2.jpg" alt="Arboleda del Campín">
-        <img class="reveal-img" data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-3.jpg" alt="Arboleda del Campín">
-        <img class="reveal-img proj-start" data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-1.jpg" alt="Reserva Campestre">
-        <img class="reveal-img" data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-2.jpg" alt="Reserva Campestre">
-        <img class="reveal-img proj-start" data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-1.jpg" alt="Ciprés de Bella Suiza">
-        <img class="reveal-img" data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
-        <img class="reveal-img" data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
-        <img class="reveal-img proj-start" data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
-        <img class="reveal-img proj-start" data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
-        <img class="reveal-img proj-start" data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
-        <div class="proj-gallery-spacer" aria-hidden="true"></div>
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-1.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-2.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-3.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="torres-makalu-4.jpg" alt="Torres Makalú">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-1.jpg" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-2.jpg" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="torre-40-3.jpg" alt="Torre 40">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-1.jpg" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-2.jpg" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="arboleda-del-campin-3.jpg" alt="Arboleda del Campín">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-1.jpg" alt="Reserva Campestre">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="reserva-campestre-2.jpg" alt="Reserva Campestre">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-1.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
+        <img data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
+        <img data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
+        <img data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
       </div>
-      <button type="button" class="proj-arrow proj-arrow-prev" id="megaPrev" aria-label="Proyecto anterior">&#8249;</button>
-      <button type="button" class="proj-arrow proj-arrow-next" id="megaNext" aria-label="Siguiente proyecto">&#8250;</button>
       <div class="proj-caption reveal" id="megaCaption">
         <h3 id="megaTitle">Torres Makalú</h3>
         <div class="proj-meta" id="megaMeta"><span>210 apartamentos</span><span>Constructora A&amp;C</span></div>
@@ -801,21 +787,19 @@
     </div>
     <div class="dev-gallery-band reveal">
       <div class="dev-gallery" id="devGallery">
-        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
-        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
-        <img class="reveal-img" data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
-        <img class="reveal-img dev-start" data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
-        <img class="reveal-img" data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
-        <img class="reveal-img dev-start" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
-        <img class="reveal-img" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
-        <img class="reveal-img" data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
-        <img class="reveal-img dev-start" data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
-        <img class="reveal-img" data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
-        <img class="reveal-img dev-start" data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
-        <img class="reveal-img dev-start" data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
+        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-1.jpg" alt="Bellagio">
+        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-2.jpg" alt="Bellagio">
+        <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="bellagio-3.jpg" alt="Bellagio">
+        <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-1.jpg" alt="Nüa">
+        <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="nua-2.jpg" alt="Nüa">
+        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-1.jpg" alt="Solana Living">
+        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-2.jpg" alt="Solana Living">
+        <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="solana-living-3.jpg" alt="Solana Living">
+        <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-1.jpg" alt="Torre Vita">
+        <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="torre-vita-2.jpg" alt="Torre Vita">
+        <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="bonanza-1.jpg" alt="Bonanza">
+        <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="entreguaduas-1.jpg" alt="Entreguaduas">
       </div>
-      <button type="button" class="proj-arrow proj-arrow-prev" id="devPrev" aria-label="Proyecto anterior">&#8249;</button>
-      <button type="button" class="proj-arrow proj-arrow-next" id="devNext" aria-label="Siguiente proyecto">&#8250;</button>
       <div class="dev-caption reveal" id="devCaption">
         <h3 id="devTitle">Bellagio</h3>
         <div class="proj-meta" id="devMeta"><span>192 apartamentos</span><span>Constructora A&amp;C</span></div>
@@ -1058,191 +1042,77 @@
 
 <script>
   (function(){
-    // Carrusel único de proyectos: el título y los datos superpuestos cambian
-    // según qué foto queda centrada mientras se desplaza horizontalmente.
+    // Carrusel único de proyectos: automático, en loop, una foto visible a
+    // la vez (entra deslizándose desde la derecha con fundido, sale hacia
+    // la izquierda). El título y los datos cambian junto con la foto activa.
     var gallery = document.getElementById('megaGallery');
     var titleEl = document.getElementById('megaTitle');
     var metaEl = document.getElementById('megaMeta');
-    if(!gallery || !titleEl || !metaEl || !('IntersectionObserver' in window)) return;
+    if(!gallery || !titleEl || !metaEl) return;
 
     var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
-    var current = null;
+    if(!imgs.length) return;
 
-    // Evita que el navegador arrastre la imagen como "drag" nativo, lo cual
-    // se veía como si la foto se moviera hacia arriba y abajo al presionarla.
     imgs.forEach(function(img){
       img.setAttribute('draggable', 'false');
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
 
     function setCaption(img){
-      if(!img || img === current) return;
-      current = img;
       titleEl.textContent = img.dataset.project || '';
       var parts = (img.dataset.info || '').split('·').map(function(s){ return s.trim(); }).filter(Boolean);
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
-    var thresholds = [];
-    for(var t = 0; t <= 20; t++){ thresholds.push(t / 20); }
-
-    // Detecta la dirección del desplazamiento para saber si el título debe
-    // adelantarse al proyecto que asoma a la derecha (avance) o retroceder
-    // al que reaparece a la izquierda (retroceso).
-    var lastScrollLeft = gallery.scrollLeft;
-    var scrollDir = 0;
-    gallery.addEventListener('scroll', function(){
-      var sl = gallery.scrollLeft;
-      if(sl > lastScrollLeft) scrollDir = 1;
-      else if(sl < lastScrollLeft) scrollDir = -1;
-      lastScrollLeft = sl;
-    }, { passive: true });
-
-    // El título solo debe seguir a las fotos completamente nítidas (mismo
-    // umbral que usa el difuminado de los costados), nunca a las que solo
-    // se asoman en fade a la izquierda o a la derecha.
-    var SHARP_RATIO = 0.92;
-    var ratios = new Map();
-    var observer2 = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+    var activeIndex = 0;
+    function render(){
+      imgs.forEach(function(img, i){
+        img.classList.remove('active', 'prevshown');
+        if(i === activeIndex) img.classList.add('active');
+        else img.classList.add('prevshown');
       });
-      var sharpImgs = imgs.filter(function(img){ return (ratios.get(img) || 0) >= SHARP_RATIO; });
-      if(!sharpImgs.length) return; // en plena transición: conserva el título actual
-      var target;
-      if(scrollDir === 1){
-        target = sharpImgs[sharpImgs.length - 1];
-      } else if(scrollDir === -1){
-        target = sharpImgs[0];
-      } else {
-        target = sharpImgs[0];
-      }
-      setCaption(target);
-    }, { root: gallery, threshold: thresholds });
-
-    imgs.forEach(function(img){ observer2.observe(img); });
-    if(imgs.length) setCaption(imgs[0]);
-
-    // Difumina las fotos que solo se asoman a los lados (nítidas las que
-    // están completamente visibles), y controla las flechas de navegación.
-    var opacityObserver = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        var ratio = entry.intersectionRatio;
-        var opacity = ratio >= 0.92 ? 1 : Math.max(0.32, 0.28 + ratio * 0.75);
-        entry.target.style.opacity = opacity.toFixed(2);
-      });
-    }, { root: gallery, threshold: thresholds });
-    imgs.forEach(function(img){ opacityObserver.observe(img); });
-
-    var prevBtn = document.getElementById('megaPrev');
-    var nextBtn = document.getElementById('megaNext');
-    function scrollByStep(dir){
-      var step = (imgs[0] ? imgs[0].getBoundingClientRect().width : gallery.clientWidth * 0.4) + 7;
-      gallery.scrollBy({ left: dir * step, behavior: 'smooth' });
+      setCaption(imgs[activeIndex]);
     }
-    if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
-    if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
+    render();
 
-    // Carrusel infinito: se clonan las fotos del primer proyecto (Torres
-    // Makalú) y se agregan al final. Cuando el usuario llega a esas fotos
-    // clonadas, se salta al instante (sin animación) a las fotos reales
-    // equivalentes del principio — como son idénticas, el salto es
-    // imperceptible y da la sensación de un carrusel sin fin.
-    (function setupInfiniteLoop(){
-      var firstProjectCount = 4; // Torres Makalú tiene 4 fotos
-      var cloneImgs = [];
-      for(var i = 0; i < firstProjectCount && i < imgs.length; i++){
-        var clone = imgs[i].cloneNode(true);
-        clone.classList.add('in-view'); // que se vea de inmediato, sin animación de aparición
-        gallery.appendChild(clone);
-        cloneImgs.push(clone);
-        imgs.push(clone); // para que el título/opacidad también las reconozcan
-        observer2.observe(clone);
-        opacityObserver.observe(clone);
-      }
-      if(!cloneImgs.length) return;
+    var AUTOPLAY_MS = 4200;
+    var timer = setInterval(function(){
+      activeIndex = (activeIndex + 1) % imgs.length;
+      render();
+    }, AUTOPLAY_MS);
 
-      // Disparar el salto por "punto exacto donde la foto queda nítida"
-      // falla con gestos rápidos/con impulso en el celular, porque ese punto
-      // intermedio se puede saltar entre un evento y otro. En cambio, tocar
-      // el límite absoluto del scroll es infalible: el navegador SIEMPRE
-      // detiene ahí el scrollLeft, sin importar la velocidad del gesto.
-      var shift = null;
-      function computeShift(){
-        shift = cloneImgs[0].offsetLeft - imgs[0].offsetLeft;
-      }
-      function nearMaxScroll(){
-        return gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 40;
-      }
-      if(document.readyState === 'complete') computeShift();
-      else window.addEventListener('load', computeShift);
-      window.addEventListener('resize', computeShift);
-
-      var settleTimer = null;
-      gallery.addEventListener('scroll', function(){
-        if(shift === null) computeShift();
-        clearTimeout(settleTimer);
-        settleTimer = setTimeout(function(){
-          if(nearMaxScroll()){
-            gallery.scrollLeft -= shift;
-          }
-        }, 100);
-      }, { passive: true });
-    })();
-
-    // Al no tener espacio vertical propio, un contenedor de scroll horizontal
-    // suele "robar" la rueda del mouse/trackpad y convertir el gesto vertical
-    // en desplazamiento horizontal de las fotos. Se evita: si el gesto es
-    // mayormente vertical, se deja que la PÁGINA se desplace, no el carrusel.
-    var wheelPending = 0;
-    var wheelTicking = false;
-    gallery.addEventListener('wheel', function(e){
-      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
-        e.preventDefault();
-        // deltaY viene en distintas unidades según el dispositivo: píxeles
-        // (trackpad, deltaMode 0), líneas (muchos mouse físicos, deltaMode 1)
-        // o páginas (deltaMode 2). Sin esta conversión, el scroll con un
-        // mouse de líneas queda extremadamente lento.
-        var amount = e.deltaY;
-        if(e.deltaMode === 1) amount *= 18;
-        else if(e.deltaMode === 2) amount *= window.innerHeight;
-        // 10% más lento que el scroll normal de la página, no más.
-        wheelPending += amount * 0.9;
-        // Se agrupan los eventos por frame (en vez de mover la página en cada
-        // micro-evento de la rueda) para que el desplazamiento sea fluido y
-        // no se sienta entrecortado/lento.
-        if(!wheelTicking){
-          wheelTicking = true;
-          requestAnimationFrame(function(){
-            window.scrollBy({ top: wheelPending, left: 0, behavior: 'auto' });
-            wheelPending = 0;
-            wheelTicking = false;
-          });
+    // Pausa el avance automático mientras el lightbox está abierto, para no
+    // cambiar de foto bajo el usuario mientras la está viendo en detalle.
+    var lightboxEl = document.getElementById('lightbox');
+    if(lightboxEl){
+      var mo = new MutationObserver(function(){
+        if(lightboxEl.classList.contains('active')){
+          clearInterval(timer);
+        } else {
+          clearInterval(timer);
+          timer = setInterval(function(){
+            activeIndex = (activeIndex + 1) % imgs.length;
+            render();
+          }, AUTOPLAY_MS);
         }
-      }
-    }, { passive: false });
-
-    // En el celular no se intercepta el touch en absoluto: el carrusel se
-    // desplaza horizontalmente de forma nativa (overflow-x + scroll-snap) y
-    // la página se desplaza verticalmente de forma nativa también. Es el
-    // propio navegador quien decide, gesto a gesto, hacia cuál de los dos
-    // lados va el dedo — sin JavaScript de por medio, sin lentitud y sin
-    // conflicto. Las flechas cubren la navegación por toque/clic.
+      });
+      mo.observe(lightboxEl, { attributes: true, attributeFilter: ['class'] });
+    }
   })();
 </script>
 
 <script>
   (function(){
-    // Carrusel de "Proyectos en Desarrollo": mismo comportamiento del
-    // carrusel principal (título/datos que cambian, fade en los costados,
-    // flechas), pero sin abrir zoom al tocar la foto.
+    // Carrusel de "Proyectos en Desarrollo": automático, en loop, muestra la
+    // foto activa al centro y la anterior/siguiente en fade a los lados. Sin
+    // flechas ni zoom al tocar.
     var gallery = document.getElementById('devGallery');
     var titleEl = document.getElementById('devTitle');
     var metaEl = document.getElementById('devMeta');
-    if(!gallery || !titleEl || !metaEl || !('IntersectionObserver' in window)) return;
+    if(!gallery || !titleEl || !metaEl) return;
 
     var imgs = Array.prototype.slice.call(gallery.querySelectorAll('img'));
-    var current = null;
+    if(!imgs.length) return;
 
     imgs.forEach(function(img){
       img.setAttribute('draggable', 'false');
@@ -1250,127 +1120,32 @@
     });
 
     function setCaption(img){
-      if(!img || img === current) return;
-      current = img;
       titleEl.textContent = img.dataset.project || '';
       var parts = (img.dataset.info || '').split('·').map(function(s){ return s.trim(); }).filter(Boolean);
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
-    var thresholds = [];
-    for(var t = 0; t <= 20; t++){ thresholds.push(t / 20); }
-
-    var lastScrollLeft = gallery.scrollLeft;
-    var scrollDir = 0;
-    gallery.addEventListener('scroll', function(){
-      var sl = gallery.scrollLeft;
-      if(sl > lastScrollLeft) scrollDir = 1;
-      else if(sl < lastScrollLeft) scrollDir = -1;
-      lastScrollLeft = sl;
-    }, { passive: true });
-
-    var SHARP_RATIO = 0.92;
-    var ratios = new Map();
-    var observer2 = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+    var n = imgs.length;
+    var activeIndex = 0;
+    function render(){
+      imgs.forEach(function(img, i){
+        img.classList.remove('active', 'prev', 'next');
+        var diff = (i - activeIndex + n) % n;
+        if(diff === 0) img.classList.add('active');
+        else if(diff === 1) img.classList.add('next');
+        else if(diff === n - 1) img.classList.add('prev');
       });
-      var sharpImgs = imgs.filter(function(img){ return (ratios.get(img) || 0) >= SHARP_RATIO; });
-      if(!sharpImgs.length) return;
-      var target;
-      if(scrollDir === 1){
-        target = sharpImgs[sharpImgs.length - 1];
-      } else if(scrollDir === -1){
-        target = sharpImgs[0];
-      } else {
-        target = sharpImgs[0];
-      }
-      setCaption(target);
-    }, { root: gallery, threshold: thresholds });
-
-    imgs.forEach(function(img){ observer2.observe(img); });
-    if(imgs.length) setCaption(imgs[0]);
-
-    var opacityObserver = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        var ratio = entry.intersectionRatio;
-        var opacity = ratio >= 0.92 ? 1 : Math.max(0.32, 0.28 + ratio * 0.75);
-        entry.target.style.opacity = opacity.toFixed(2);
-      });
-    }, { root: gallery, threshold: thresholds });
-    imgs.forEach(function(img){ opacityObserver.observe(img); });
-
-    var prevBtn = document.getElementById('devPrev');
-    var nextBtn = document.getElementById('devNext');
-    function scrollByStep(dir){
-      var step = (imgs[0] ? imgs[0].getBoundingClientRect().width : gallery.clientWidth * 0.4) + 7;
-      gallery.scrollBy({ left: dir * step, behavior: 'smooth' });
+      setCaption(imgs[activeIndex]);
     }
-    if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByStep(-1); });
-    if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByStep(1); });
+    render();
 
-    // Carrusel infinito: igual que el principal, se clonan las fotos del
-    // primer proyecto (Bellagio) y se agregan al final; al llegar al límite
-    // absoluto del scroll se salta sin animación a las fotos reales
-    // equivalentes del inicio.
-    (function setupInfiniteLoop(){
-      var firstProjectCount = 3; // Bellagio tiene 3 fotos
-      var cloneImgs = [];
-      for(var i = 0; i < firstProjectCount && i < imgs.length; i++){
-        var clone = imgs[i].cloneNode(true);
-        clone.classList.add('in-view');
-        gallery.appendChild(clone);
-        cloneImgs.push(clone);
-        imgs.push(clone);
-        observer2.observe(clone);
-        opacityObserver.observe(clone);
-      }
-      if(!cloneImgs.length) return;
+    setInterval(function(){
+      activeIndex = (activeIndex + 1) % n;
+      render();
+    }, 4200);
 
-      var shift = null;
-      function computeShift(){
-        shift = cloneImgs[0].offsetLeft - imgs[0].offsetLeft;
-      }
-      function nearMaxScroll(){
-        return gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 40;
-      }
-      if(document.readyState === 'complete') computeShift();
-      else window.addEventListener('load', computeShift);
-      window.addEventListener('resize', computeShift);
-
-      var settleTimer = null;
-      gallery.addEventListener('scroll', function(){
-        if(shift === null) computeShift();
-        clearTimeout(settleTimer);
-        settleTimer = setTimeout(function(){
-          if(nearMaxScroll()){
-            gallery.scrollLeft -= shift;
-          }
-        }, 100);
-      }, { passive: true });
-    })();
-
-    var wheelPending = 0;
-    var wheelTicking = false;
-    gallery.addEventListener('wheel', function(e){
-      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
-        e.preventDefault();
-        var amount = e.deltaY;
-        if(e.deltaMode === 1) amount *= 18;
-        else if(e.deltaMode === 2) amount *= window.innerHeight;
-        wheelPending += amount * 0.9;
-        if(!wheelTicking){
-          wheelTicking = true;
-          requestAnimationFrame(function(){
-            window.scrollBy({ top: wheelPending, left: 0, behavior: 'auto' });
-            wheelPending = 0;
-            wheelTicking = false;
-          });
-        }
-      }
-    }, { passive: false });
-
-    // Sin listener de click/tap: a propósito, este carrusel no abre zoom.
+    // Sin listener de click/tap ni flechas: a propósito, este carrusel
+    // avanza solo y no abre zoom.
   })();
 </script>
 
