@@ -364,11 +364,30 @@
     cursor:zoom-out;
   }
   .lightbox.active{ display:flex; flex-direction:column; }
-  .lightbox img{
-    max-width:100%; max-height:calc(100% - 92px);
+  .lightbox-img-wrap{
+    position:relative;
+    display:inline-block;
+    max-width:100%;
+    max-height:calc(100% - 92px);
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .lightbox-img-wrap img{
+    display:block;
+    max-width:100%;
+    max-height:calc(100% - 92px);
     width:auto; height:auto;
     object-fit:contain;
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  /* Tratamiento dorado (identidad Avanti) de la foto ampliada: conserva
+     el detalle/luminosidad de la imagen pero reemplaza su tono por el
+     dorado del logo, en vez del filtro azulado del carrusel. */
+  .lightbox-img-wrap::after{
+    content:'';
+    position:absolute; inset:0;
+    background:#E6BD7F;
+    mix-blend-mode:color;
+    opacity:.35;
+    pointer-events:none;
   }
   .lightbox-caption{
     display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -963,7 +982,9 @@
   <div class="lightbox-close" id="lightboxClose">&times;</div>
   <div class="lightbox-arrow lightbox-prev" id="lightboxPrev">&#8249;</div>
   <div class="lightbox-arrow lightbox-next" id="lightboxNext">&#8250;</div>
-  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-img-wrap" id="lightboxImgWrap">
+    <img id="lightboxImg" src="" alt="">
+  </div>
   <div class="lightbox-caption">
     <h3 id="lightboxTitle"></h3>
     <div class="proj-meta" id="lightboxMeta"></div>
