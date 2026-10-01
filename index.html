@@ -488,7 +488,7 @@
     -webkit-user-drag:none;
     user-select:none;
   }
-  .dev-track img.active{ opacity:1; }
+  .dev-track img.active{ opacity:1; pointer-events:auto; cursor:zoom-in; }
   @media (max-width:640px){
     .dev-gallery{ height:260px; }
     .dev-track{ gap:10px; }
@@ -998,9 +998,9 @@
     }
 
     function openLightbox(img){
-      var gallery = img.closest('.proj-gallery');
+      var gallery = img.closest('.proj-gallery, .dev-gallery');
       currentImages = Array.prototype.slice.call(gallery.querySelectorAll('img')).filter(function(el){
-        return !el.classList.contains('proj-clone');
+        return !el.classList.contains('proj-clone') && !el.classList.contains('dev-clone');
       });
       currentIndex = currentImages.indexOf(img);
       showImage(currentIndex);
@@ -1013,8 +1013,11 @@
       currentImages = [];
     }
 
-    document.querySelectorAll('.proj-gallery img').forEach(function(img){
-      img.addEventListener('click', function(){ openLightbox(img); });
+    document.querySelectorAll('.proj-gallery img, .dev-gallery img').forEach(function(img){
+      img.addEventListener('click', function(e){
+        e.stopPropagation();
+        openLightbox(img);
+      });
     });
 
     lightbox.addEventListener('click', closeLightbox);
@@ -1167,8 +1170,8 @@
   (function(){
     // Carrusel de "Proyectos en Desarrollo": automático, en loop, muestra
     // SIEMPRE dos fotos completas (proporción 4:5 real) avanzando de a una,
-    // con la anterior/siguiente asomando en fade a los lados. Sin flechas
-    // ni zoom al tocar.
+    // con la anterior/siguiente asomando en fade a los lados. La foto activa
+    // se puede tocar para abrir el mismo lightbox con zoom del carrusel 1.
     var gallery = document.getElementById('devGallery');
     var track = document.getElementById('devTrack');
     var titleEl = document.getElementById('devTitle');
@@ -1190,6 +1193,7 @@
     var CLONE_COUNT = Math.min(2, n);
     for(var c = 0; c < CLONE_COUNT; c++){
       var clone = imgs[c].cloneNode(true);
+      clone.classList.add('dev-clone');
       track.appendChild(clone);
       imgs.push(clone);
     }
@@ -1225,7 +1229,8 @@
     }
     render(true);
 
-    setInterval(function(){
+    var DEV_AUTOPLAY_MS = 4200;
+    function devTick(){
       activeIndex++;
       render(false);
       if(activeIndex === n){
@@ -1237,12 +1242,24 @@
           render(true);
         }, 900);
       }
-    }, 4200);
+    }
+    var devTimer = setInterval(devTick, DEV_AUTOPLAY_MS);
 
     window.addEventListener('resize', function(){ render(true); });
 
-    // Sin listener de click/tap ni flechas: a propósito, este carrusel
-    // avanza solo y no abre zoom.
+    // Pausa el avance automático mientras el lightbox está abierto, igual
+    // que en el carrusel 1, para no cambiar de foto bajo el usuario
+    // mientras la está viendo en detalle.
+    var devLightboxEl = document.getElementById('lightbox');
+    if(devLightboxEl){
+      var devMo = new MutationObserver(function(){
+        clearInterval(devTimer);
+        if(!devLightboxEl.classList.contains('active')){
+          devTimer = setInterval(devTick, DEV_AUTOPLAY_MS);
+        }
+      });
+      devMo.observe(devLightboxEl, { attributes: true, attributeFilter: ['class'] });
+    }
   })();
 </script>
 
