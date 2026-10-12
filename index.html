@@ -272,7 +272,7 @@
     position:relative;
     left:50%;
     margin-left:-50vw;
-    background:linear-gradient(90deg, var(--navy-950) 0%, var(--navy-800) 70%, var(--azul-suave) 100%);
+    background:#fff;
     padding:14px 0;
     box-sizing:border-box;
   }
@@ -471,7 +471,7 @@
     left:50%;
     margin-left:-50vw;
     margin-top:12px;
-    background:linear-gradient(90deg, var(--navy-950) 0%, var(--navy-800) 70%, var(--azul-suave) 100%);
+    background:#fff;
     padding:10px 0;
     box-sizing:border-box;
   }
@@ -721,6 +721,7 @@
   }
   .proj-gallery::after,
   .dev-gallery::after{
+    display:none; /* viñeta oscura retirada: el fondo ahora es blanco */
     content:'';
     position:absolute;
     inset:0;
