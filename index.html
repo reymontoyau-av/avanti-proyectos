@@ -13,24 +13,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Paleta — Manual de Lineamientos Gráficos Avanti */
-    --navy-950:#141E32;       /* Azul principal */
-    --navy-800:#1B2A44;       /* variación más oscura del azul principal, para capas/hover */
-    --azul-suave:#42517A;     /* Azul suave — etiquetas / íconos */
-    --azul-suave-light:#9BA7C4; /* tinte claro del azul suave, para texto secundario sobre fondo oscuro */
-    --blue-faint:rgba(20,30,50,.08); /* azul principal muy claro, para numerales de fondo */
-    --gray-100:#FFFEFD;       /* Fondo crema */
-    --gray-200:#F5F1EA;
-    --line:#E4D6C4;           /* Línea divisoria */
-    --line-dark:rgba(255,255,255,.14);
-    --ink:#141E32;            /* Azul principal — títulos */
-    --body-gray:#2A2620;      /* Texto de cuerpo */
-    --brass:#42517A;          /* acento — reutiliza azul suave */
+    /* Paleta — Manual de marca Avanti */
+    --navy-950:#141E32;       /* Azul noche — color de identidad */
+    --navy-800:#2D3237;       /* Grafito — fondos secundarios oscuros */
+    --acero:#545A60;          /* Acero — texto secundario sobre blanco */
+    --niebla:#D3D3D7;         /* Niebla — líneas y texto secundario sobre azul noche */
+    --dorado:#ECBE7A;         /* Dorado — acento: filetes y detalles (nunca texto sobre blanco) */
+    --azul-suave:var(--acero);
+    --azul-suave-light:var(--niebla);
+    --blue-faint:rgba(20,30,50,.08); /* azul noche muy claro, para numerales de fondo */
+    --gray-100:#FFFFFF;       /* Blanco */
+    --gray-200:#D3D3D7;
+    --line:#D3D3D7;           /* Línea divisoria (niebla) */
+    --line-dark:rgba(211,211,215,.18);
+    --ink:#141E32;            /* Azul noche — títulos */
+    --body-gray:#2D3237;      /* Grafito — texto de cuerpo */
+    --brass:var(--dorado);    /* acento de marca */
     --radius:2px;
     /* alias de compatibilidad */
-    --slate-300:var(--azul-suave-light);
-    --slate-500:var(--azul-suave);
-    --blue-600:var(--azul-suave);
+    --slate-300:var(--niebla);
+    --slate-500:var(--niebla); /* se usa sobre fondos azul noche */
+    --blue-600:var(--acero);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -44,7 +47,7 @@
   }
   h1,h2,h3,.display{
     font-family:'Questrial', 'Poppins', sans-serif;
-    font-weight:700;
+    font-weight:400;
     letter-spacing:-0.005em;
     color:var(--ink);
   }
@@ -61,7 +64,7 @@
   header.nav{
     position:sticky; top:0; z-index:40;
     background:var(--navy-950);
-    border-bottom:1px solid var(--line-dark);
+    border-bottom:2px solid var(--dorado);
   }
   .nav .wrap{
     display:grid;
@@ -217,10 +220,11 @@
     align-items:flex-end;
     min-height:34px;
     line-height:1;
-    font-family:'Questrial', 'Poppins', sans-serif;
+    font-family:'Poppins', sans-serif;
     font-size:30px;
     color:#fff;
     font-weight:600;
+    font-variant-numeric:tabular-nums;
     margin-bottom:6px;
   }
   .stat span{ font-size:13px; color:var(--slate-500); line-height:1.3; }
@@ -234,6 +238,13 @@
     padding-bottom:8px;
     margin-bottom:12px;
     border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .sec-head::after{
+    content:"";
+    position:absolute; left:0; bottom:-1px;
+    width:96px; height:2px;
+    background:var(--dorado);
   }
   .sec-num{
     flex:0 0 auto;
@@ -333,7 +344,7 @@
   }
   .proj-caption h3{
     font-size:18px;
-    font-weight:700;
+    font-weight:400;
     color:#fff;
     margin:0;
     text-shadow:0 1px 6px rgba(0,0,0,.35);
@@ -384,7 +395,7 @@
   .lightbox-img-wrap::after{
     content:'';
     position:absolute; inset:0;
-    background:#E6BD7F;
+    background:var(--dorado);
     mix-blend-mode:color;
     opacity:.175;
     pointer-events:none;
@@ -396,7 +407,7 @@
   .lightbox-caption h3{
     color:#fff;
     font-family:'Questrial', 'Poppins', sans-serif;
-    font-weight:700;
+    font-weight:400;
     font-size:18px;
     text-align:center;
     margin:0;
@@ -528,7 +539,7 @@
   }
   .dev-caption h3{
     font-size:16px;
-    font-weight:700;
+    font-weight:400;
     color:#fff;
     margin:0;
     text-shadow:0 1px 6px rgba(0,0,0,.35);
@@ -586,7 +597,8 @@
     margin-left:-50vw;
     padding:22px 32px;
     box-sizing:border-box;
-    background:linear-gradient(100deg, var(--navy-950) 0%, var(--navy-800) 55%, var(--azul-suave) 130%);
+    background:var(--navy-950);
+    border-left:2px solid var(--dorado);
   }
   @media (max-width:640px){ .approach-grid{ padding:16px 20px; } }
   .approach-card{
