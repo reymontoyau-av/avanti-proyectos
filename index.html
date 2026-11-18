@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avanti Proyectos — Arquitectura y desarrollo inmobiliario</title>
+<meta name="description" content="Firma de arquitectura y desarrollo inmobiliario en Manizales: estudios de prefactibilidad, diseño arquitectónico, desarrollo y gerencia de proyectos de vivienda.">
+<meta name="theme-color" content="#141E32">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
@@ -227,7 +229,7 @@
     font-variant-numeric:tabular-nums;
     margin-bottom:6px;
   }
-  .stat span{ font-size:13px; color:var(--slate-500); line-height:1.3; }
+  .stat span{ font-size:13.5px; color:var(--slate-300); line-height:1.35; }
   @media (max-width:640px){ .hero-stats{grid-template-columns:1fr 1fr;} }
 
   /* ---------- SECTION HEADER (número a la izquierda + eyebrow/título apilados a la derecha) ---------- */
@@ -667,7 +669,7 @@
   .social-link svg{ flex:0 0 auto; }
   .foot-bottom{
     display:flex; justify-content:space-between; align-items:center;
-    padding-top:10px; font-size:13px; color:var(--slate-500);
+    padding-top:10px; font-size:13px; color:var(--slate-300);
     flex-wrap:wrap; gap:12px;
   }
   @media (max-width:700px){ .foot-grid{ grid-template-columns:1fr; gap:32px; } }
@@ -744,22 +746,131 @@
     pointer-events:none;
     z-index:4;
   }
+
+  /* ---------- UI/UX: accesibilidad, navegación móvil y controles ---------- */
+  body{ overflow-x:clip; }
+  section[id]{ scroll-margin-top:64px; }
+
+  /* Foco visible (blanco sobre fondos oscuros, azul sobre claros) */
+  a:focus-visible, button:focus-visible, .proj-track img:focus-visible, .dev-track img:focus-visible{
+    outline:2px solid var(--azul-suave); outline-offset:3px;
+  }
+  header.nav a:focus-visible, header.nav button:focus-visible,
+  .hero a:focus-visible, .cta a:focus-visible, footer a:focus-visible,
+  .lightbox button:focus-visible{ outline-color:#fff; }
+  .proj-track img:focus-visible, .dev-track img:focus-visible{ outline-offset:-3px; }
+
+  /* Estadísticas del hero: 4 columnas en PC, 2 en celular (antes se cortaba "Avanti") */
+  .hero-stats--4{ grid-template-columns:repeat(4,1fr); max-width:820px; }
+  @media (max-width:640px){
+    .hero-stats--4{ grid-template-columns:1fr 1fr; gap:12px 16px; }
+    .stat b{ font-size:26px; }
+  }
+
+  /* Navegación */
+  .brand{ color:inherit; }
+  .nav-toggle{
+    display:none;
+    width:44px; height:44px;
+    align-items:center; justify-content:center;
+    background:transparent; color:#fff;
+    border:1px solid var(--line-dark); border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .nav-toggle:hover{ border-color:var(--slate-300); }
+  .nav-cta{ display:inline-flex; align-items:center; min-height:40px; }
+  nav.links a{ padding:6px 2px; }
+  @media (max-width:780px){
+    .nav-right{ gap:10px; }
+    .nav-toggle{ display:inline-flex; }
+    nav.links{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:0;
+      background:var(--navy-950);
+      border-bottom:1px solid var(--line-dark);
+      padding:4px 20px 12px;
+      box-shadow:0 16px 32px rgba(0,0,0,.35);
+    }
+    nav.links.open{ display:flex; }
+    nav.links a{
+      display:flex; align-items:center;
+      min-height:48px; padding:0;
+      font-size:16px;
+      border-bottom:1px solid var(--line-dark);
+    }
+    nav.links a:last-child{ border-bottom:none; }
+  }
+  @media (max-width:480px){
+    .nav-cta{ min-height:40px; padding:0 12px; font-size:13px; }
+  }
+
+  /* Botón Pausar/Reanudar de los carruseles */
+  .car-pause{
+    position:absolute; top:20px; right:20px; z-index:6;
+    min-height:36px; padding:0 14px;
+    font:500 12.5px/1 'Poppins', sans-serif;
+    color:var(--ink);
+    background:rgba(255,255,255,.94);
+    border:1px solid var(--line); border-radius:999px;
+    cursor:pointer;
+  }
+  .car-pause:hover{ border-color:var(--azul-suave); }
+  @media (max-width:640px){ .car-pause{ top:14px; right:14px; } }
+
+  /* Lightbox: botones reales, herramientas de zoom, alto dinámico en móvil */
+  .lightbox-close, .lightbox-arrow, .lb-tools button{
+    font-family:inherit; padding:0; -webkit-tap-highlight-color:transparent;
+  }
+  .lightbox-close:hover, .lightbox-arrow:hover, .lb-tools button:hover{ background:rgba(255,255,255,.22); }
+  .lb-tools{
+    position:fixed; top:20px; left:24px;
+    display:flex; gap:8px; z-index:102;
+  }
+  .lb-tools button{
+    min-width:40px; height:40px;
+    border-radius:20px;
+    background:rgba(255,255,255,.12);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.3);
+    font-size:20px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .lb-tools .lb-fit{ font-size:13px; padding:0 14px; letter-spacing:.02em; }
+  .lightbox-img-wrap{
+    max-height:calc(100vh - 156px);
+    max-height:calc(100dvh - 156px);
+    touch-action:none;
+    cursor:default;
+    transform-origin:center center;
+    will-change:transform;
+  }
+  .lightbox-img-wrap.zoomed{ cursor:grab; }
+  .lightbox-img-wrap img{ -webkit-user-drag:none; user-select:none; }
+  @media (max-width:640px){
+    .lb-tools{ top:14px; left:12px; gap:6px; }
+    .lightbox-close{ top:14px; right:12px; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
 </style>
 </head>
 <body>
 
-<header class="nav">
+<header class="nav" id="top">
   <div class="wrap">
-    <div class="brand"><img src="assets/logo-white.webp" alt="Avanti"></div>
+    <a class="brand" href="#top" aria-label="Avanti Proyectos, ir al inicio"><img src="assets/logo-white.webp" alt="" width="36" height="36"></a>
     <span class="brand-text"><b>Avanti</b><span>Proyectos</span></span>
     <div class="nav-right">
-      <nav class="links">
+      <nav class="links" id="navLinks" aria-label="Secciones">
         <a href="#proyectos">Proyectos</a>
         <a href="#nosotros">Nosotros</a>
         <a href="#enfoque">Enfoque</a>
         <a href="#servicios">Servicios</a>
       </nav>
       <a href="#contacto" class="nav-cta">Contáctanos</a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Abrir menú"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="1.8"/></svg></button>
     </div>
   </div>
 </header>
@@ -785,7 +896,7 @@
       <a href="#contacto" class="btn-primary">Conversemos de tu proyecto</a>
       <a href="#servicios" class="btn-ghost">Qué hacemos</a>
     </div>
-    <div class="hero-stats" style="grid-template-columns:repeat(4,1fr); max-width:820px;">
+    <div class="hero-stats hero-stats--4">
       <div class="stat"><b>+21</b><span>años de experiencia</span></div>
       <div class="stat"><b>+5.000</b><span>unidades de vivienda diseñadas</span></div>
       <div class="stat"><b>+50</b><span>proyectos diseñados</span></div>
@@ -810,10 +921,10 @@
     <div class="proj-gallery-band reveal">
       <div class="proj-gallery" id="megaGallery">
         <div class="proj-track" id="megaTrack">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-1.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-2.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-3.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora A&amp;C" src="assets/torres-makalu-4.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-1.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-2.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-3.jpg" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-4.jpg" alt="Torres Makalú">
         <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-1.jpg" alt="Torre 40">
         <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-2.jpg" alt="Torre 40">
         <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-3.jpg" alt="Torre 40">
@@ -832,26 +943,26 @@
       </div>
       <div class="proj-caption reveal" id="megaCaption">
         <h3 id="megaTitle">Torres Makalú</h3>
-        <div class="proj-meta" id="megaMeta"><span>210 apartamentos</span><span>Constructora A&amp;C</span></div>
+        <div class="proj-meta" id="megaMeta"><span>210 apartamentos</span><span>Constructora Olize</span></div>
       </div>
     </div>
 
     <div class="dev-projects-head reveal">
-      <div class="sec-tag">Proyectos en Desarrollo</div>
+      <div class="sec-tag" role="heading" aria-level="3">Proyectos en Desarrollo</div>
     </div>
     <div class="dev-gallery-band reveal">
       <div class="dev-gallery" id="devGallery">
         <div class="dev-track" id="devTrack">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-1.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-2.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora A&amp;C" src="assets/bellagio-3.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-1.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-2.jpg" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-3.jpg" alt="Bellagio">
           <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-1.jpg" alt="Nüa">
           <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-2.jpg" alt="Nüa">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-1.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-2.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora A&amp;C" src="assets/solana-living-3.jpg" alt="Solana Living">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="assets/torre-vita-1.jpg" alt="Torre Vita">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora A&amp;C" src="assets/torre-vita-2.jpg" alt="Torre Vita">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-1.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-2.jpg" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-3.jpg" alt="Solana Living">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/torre-vita-1.jpg" alt="Torre Vita">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/torre-vita-2.jpg" alt="Torre Vita">
           <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-1.jpg" alt="Bonanza">
           <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-2.jpg" alt="Bonanza">
           <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-3.jpg" alt="Bonanza">
@@ -862,7 +973,7 @@
       </div>
       <div class="dev-caption reveal" id="devCaption">
         <h3 id="devTitle">Bellagio</h3>
-        <div class="proj-meta" id="devMeta"><span>192 apartamentos</span><span>Constructora A&amp;C</span></div>
+        <div class="proj-meta" id="devMeta"><span>192 apartamentos</span><span>Constructora Olize</span></div>
       </div>
     </div>
   </div>
@@ -965,13 +1076,13 @@
     <div class="foot-grid">
       <div class="reveal">
         <img src="assets/logo-white.webp" alt="Avanti Proyectos" style="height:46px; width:auto; margin-bottom:12px;">
-        <p style="max-width:320px; color:var(--slate-500);">Arquitectura y desarrollo inmobiliario en Manizales, Caldas, Colombia.</p>
+        <p style="max-width:320px; color:var(--slate-300);">Arquitectura y desarrollo inmobiliario en Manizales, Caldas, Colombia.</p>
       </div>
       <div class="reveal">
         <h4>Contacto</h4>
         <a href="mailto:contacto@avantiproyectos.com">contacto@avantiproyectos.com</a>
         <a href="tel:+573106432512">310 643 25 12</a>
-        <p style="margin-top:10px; color:var(--slate-500); font-size:13px;">Arq. Reinaldo Montoya Umaña</p>
+        <p style="margin-top:10px; color:var(--slate-300); font-size:13px;">Arq. Reinaldo Montoya Umaña</p>
         <a href="mailto:rey.montoya.u@gmail.com">rey.montoya.u@gmail.com</a>
         <a href="tel:+573127963637">312 796 36 37</a>
         <a href="https://www.instagram.com/avantiproyectos/" target="_blank" rel="noopener" class="social-link">
@@ -986,38 +1097,74 @@
     </div>
     <div class="foot-bottom">
       <span>© 2026 Avanti Proyectos. Todos los derechos reservados.</span>
-      <span>Dirección de Arquitectura: Reinaldo Montoya Umaña</span>
+      <span>Arq. Reinaldo Montoya Umaña</span>
     </div>
   </div>
 </footer>
 
-<div class="lightbox" id="lightbox">
-  <div class="lightbox-close" id="lightboxClose">&times;</div>
-  <div class="lightbox-arrow lightbox-prev" id="lightboxPrev">&#8249;</div>
-  <div class="lightbox-arrow lightbox-next" id="lightboxNext">&#8250;</div>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada del proyecto">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Cerrar (Esc)">&times;</button>
+  <div class="lb-tools" role="group" aria-label="Zoom de la foto">
+    <button type="button" id="lbZoomIn" aria-label="Acercar">+</button>
+    <button type="button" id="lbZoomOut" aria-label="Alejar">&minus;</button>
+    <button type="button" id="lbFit" class="lb-fit">Ajustar</button>
+  </div>
+  <button type="button" class="lightbox-arrow lightbox-prev" id="lightboxPrev" aria-label="Foto anterior">&#8249;</button>
+  <button type="button" class="lightbox-arrow lightbox-next" id="lightboxNext" aria-label="Foto siguiente">&#8250;</button>
   <div class="lightbox-img-wrap" id="lightboxImgWrap">
-    <img id="lightboxImg" src="" alt="">
+    <img id="lightboxImg" src="" alt="" draggable="false">
   </div>
   <div class="lightbox-caption">
     <h3 id="lightboxTitle"></h3>
     <div class="proj-meta" id="lightboxMeta"></div>
   </div>
-  <div class="lightbox-counter" id="lightboxCounter"></div>
+  <div class="lightbox-counter" id="lightboxCounter" aria-live="polite"></div>
 </div>
 
 <script>
   (function(){
     var lightbox = document.getElementById('lightbox');
     var lightboxImg = document.getElementById('lightboxImg');
+    var wrap = document.getElementById('lightboxImgWrap');
     var closeBtn = document.getElementById('lightboxClose');
     var prevBtn = document.getElementById('lightboxPrev');
     var nextBtn = document.getElementById('lightboxNext');
+    var zoomInBtn = document.getElementById('lbZoomIn');
+    var zoomOutBtn = document.getElementById('lbZoomOut');
+    var fitBtn = document.getElementById('lbFit');
     var counter = document.getElementById('lightboxCounter');
     var titleEl = document.getElementById('lightboxTitle');
     var metaEl = document.getElementById('lightboxMeta');
 
     var currentImages = [];
     var currentIndex = 0;
+    var lastFocus = null;
+
+    /* ---- Zoom / pan (rueda hacia el puntero, arrastre, pellizco,
+       botones +, − y Ajustar, doble clic para ajustar) ---- */
+    var MAX_ZOOM = 5, s = 1, tx = 0, ty = 0;
+    function apply(){
+      wrap.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+      wrap.classList.toggle('zoomed', s > 1);
+    }
+    function clampPan(){
+      var hw = wrap.offsetWidth * s / 2, hh = wrap.offsetHeight * s / 2;
+      tx = Math.max(-hw, Math.min(hw, tx));
+      ty = Math.max(-hh, Math.min(hh, ty));
+    }
+    function fit(){ s = 1; tx = 0; ty = 0; apply(); }
+    function zoomAt(ns, cx, cy){
+      ns = Math.max(1, Math.min(MAX_ZOOM, ns));
+      if(ns === s) return;
+      var r = wrap.getBoundingClientRect();
+      var c0x = r.left + r.width / 2 - tx, c0y = r.top + r.height / 2 - ty;
+      var k = ns / s;
+      tx = (cx - c0x) - ((cx - c0x) - tx) * k;
+      ty = (cy - c0y) - ((cy - c0y) - ty) * k;
+      s = ns;
+      if(s === 1){ tx = 0; ty = 0; }
+      clampPan(); apply();
+    }
 
     function showImage(index){
       if(!currentImages.length) return;
@@ -1027,8 +1174,9 @@
       lightboxImg.alt = img.alt;
       counter.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
       titleEl.textContent = img.dataset.project || img.alt || '';
-      var parts = (img.dataset.info || '').split('·').map(function(s){ return s.trim(); }).filter(Boolean);
+      var parts = (img.dataset.info || '').split('·').map(function(p){ return p.trim(); }).filter(Boolean);
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
+      fit();
     }
 
     function openLightbox(img){
@@ -1036,46 +1184,113 @@
       currentImages = Array.prototype.slice.call(gallery.querySelectorAll('img')).filter(function(el){
         return !el.classList.contains('proj-clone') && !el.classList.contains('dev-clone');
       });
-      currentIndex = currentImages.indexOf(img);
-      showImage(currentIndex);
+      var idx = currentImages.indexOf(img);
+      if(idx < 0){ // clon del bucle: usar su original
+        for(var i = 0; i < currentImages.length; i++){
+          if(currentImages[i].getAttribute('src') === img.getAttribute('src')){ idx = i; break; }
+        }
+      }
+      lastFocus = document.activeElement;
       lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      showImage(Math.max(0, idx));
+      closeBtn.focus();
     }
 
     function closeLightbox(){
       lightbox.classList.remove('active');
+      document.body.style.overflow = '';
       lightboxImg.src = '';
       currentImages = [];
+      fit();
+      if(lastFocus && lastFocus.focus){ try{ lastFocus.focus({preventScroll:true}); }catch(e){} }
     }
 
-    document.querySelectorAll('.proj-gallery img, .dev-gallery img').forEach(function(img){
-      img.addEventListener('click', function(e){
-        e.stopPropagation();
-        openLightbox(img);
+    /* Apertura por clic o teclado (delegado: también funciona con las fotos clonadas) */
+    document.querySelectorAll('.proj-gallery, .dev-gallery').forEach(function(g){
+      g.addEventListener('click', function(e){
+        var img = e.target.closest('img');
+        if(img && img.classList.contains('active')){ e.stopPropagation(); openLightbox(img); }
+      });
+      g.addEventListener('keydown', function(e){
+        if((e.key === 'Enter' || e.key === ' ') && e.target.tagName === 'IMG'){
+          e.preventDefault(); openLightbox(e.target);
+        }
       });
     });
 
-    lightbox.addEventListener('click', closeLightbox);
-
-    [closeBtn, prevBtn, nextBtn].forEach(function(btn){
-      btn.addEventListener('click', function(e){ e.stopPropagation(); });
+    /* Cierre: solo al tocar el fondo (la foto ahora se puede arrastrar y ampliar) */
+    var dragged = false;
+    lightbox.addEventListener('click', function(e){
+      if(e.target !== lightbox) return;
+      if(dragged){ dragged = false; return; }
+      closeLightbox();
     });
     closeBtn.addEventListener('click', closeLightbox);
     prevBtn.addEventListener('click', function(){ showImage(currentIndex - 1); });
     nextBtn.addEventListener('click', function(){ showImage(currentIndex + 1); });
+    zoomInBtn.addEventListener('click', function(){ zoomAt(s * 1.5, window.innerWidth / 2, window.innerHeight / 2); });
+    zoomOutBtn.addEventListener('click', function(){ zoomAt(s / 1.5, window.innerWidth / 2, window.innerHeight / 2); });
+    fitBtn.addEventListener('click', fit);
 
+    lightbox.addEventListener('wheel', function(e){
+      if(!lightbox.classList.contains('active')) return;
+      e.preventDefault();
+      zoomAt(s * Math.exp(-e.deltaY * 0.0015), e.clientX, e.clientY);
+    }, {passive:false});
+    wrap.addEventListener('dblclick', function(e){ e.preventDefault(); fit(); });
+
+    /* Arrastre con 1 puntero (si hay zoom) y pellizco con 2 */
+    var ptrs = {}, startDist = 0, startS = 1;
+    function ptrList(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
+    wrap.addEventListener('pointerdown', function(e){
+      try{ wrap.setPointerCapture(e.pointerId); }catch(err){}
+      ptrs[e.pointerId] = {x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY};
+      dragged = false;
+      var l = ptrList();
+      if(l.length === 2){ startDist = Math.hypot(l[0].x - l[1].x, l[0].y - l[1].y) || 1; startS = s; }
+    });
+    wrap.addEventListener('pointermove', function(e){
+      var p = ptrs[e.pointerId]; if(!p) return;
+      var dx = e.clientX - p.x, dy = e.clientY - p.y;
+      p.x = e.clientX; p.y = e.clientY;
+      if(Math.hypot(p.x - p.sx, p.y - p.sy) > 5) dragged = true;
+      var l = ptrList();
+      if(l.length === 2){
+        var d = Math.hypot(l[0].x - l[1].x, l[0].y - l[1].y);
+        zoomAt(startS * d / startDist, (l[0].x + l[1].x) / 2, (l[0].y + l[1].y) / 2);
+      } else if(l.length === 1 && s > 1){
+        tx += dx; ty += dy; clampPan(); apply();
+      }
+    });
+    function endPtr(e){ delete ptrs[e.pointerId]; }
+    wrap.addEventListener('pointerup', endPtr);
+    wrap.addEventListener('pointercancel', endPtr);
+
+    /* Teclado: Esc cierra, flechas navegan, +/− zoom, 0 ajusta; el foco queda dentro del diálogo */
     document.addEventListener('keydown', function(e){
       if(!lightbox.classList.contains('active')) return;
       if(e.key === 'Escape') closeLightbox();
-      if(e.key === 'ArrowRight') showImage(currentIndex + 1);
-      if(e.key === 'ArrowLeft') showImage(currentIndex - 1);
+      else if(e.key === 'ArrowRight') showImage(currentIndex + 1);
+      else if(e.key === 'ArrowLeft') showImage(currentIndex - 1);
+      else if(e.key === '+' || e.key === '=') zoomAt(s * 1.5, window.innerWidth / 2, window.innerHeight / 2);
+      else if(e.key === '-' || e.key === '_') zoomAt(s / 1.5, window.innerWidth / 2, window.innerHeight / 2);
+      else if(e.key === '0') fit();
+      else if(e.key === 'Tab'){
+        var f = [closeBtn, zoomInBtn, zoomOutBtn, fitBtn, prevBtn, nextBtn];
+        var i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      }
     });
 
+    /* Deslizar para cambiar de foto: solo sin zoom y con un dedo */
     var touchStartX = null;
     lightbox.addEventListener('touchstart', function(e){
-      touchStartX = e.touches[0].clientX;
+      touchStartX = (e.touches.length === 1) ? e.touches[0].clientX : null;
     }, {passive:true});
     lightbox.addEventListener('touchend', function(e){
-      if(touchStartX === null) return;
+      if(touchStartX === null || s > 1){ touchStartX = null; return; }
       var diff = e.changedTouches[0].clientX - touchStartX;
       if(Math.abs(diff) > 40){
         if(diff < 0) showImage(currentIndex + 1);
@@ -1085,6 +1300,7 @@
     }, {passive:true});
   })();
 </script>
+
 
 <script>
   (function(){
@@ -1150,6 +1366,7 @@
     function render(instant){
       imgs.forEach(function(img, i){
         img.classList.toggle('active', i === activeIndex);
+        img.tabIndex = (i === activeIndex && !img.classList.contains('proj-clone')) ? 0 : -1;
       });
       setCaption(imgs[activeIndex]);
 
@@ -1169,6 +1386,7 @@
 
     var AUTOPLAY_MS = 4200;
     function tick(){
+      if(window.__carPause && window.__carPause.mega) return;
       activeIndex++;
       render(false);
       if(activeIndex === n){
@@ -1242,7 +1460,9 @@
 
     function render(instant){
       imgs.forEach(function(img, i){
-        img.classList.toggle('active', i === activeIndex || i === activeIndex + 1);
+        var on = (i === activeIndex || i === activeIndex + 1);
+        img.classList.toggle('active', on);
+        img.tabIndex = (on && !img.classList.contains('dev-clone')) ? 0 : -1;
       });
       setCaption(imgs[activeIndex]);
 
@@ -1265,6 +1485,7 @@
 
     var DEV_AUTOPLAY_MS = 4200;
     function devTick(){
+      if(window.__carPause && window.__carPause.dev) return;
       activeIndex++;
       render(false);
       if(activeIndex === n){
@@ -1296,6 +1517,65 @@
     }
   })();
 </script>
+
+<script>
+  (function(){
+    // Controles de los carruseles: botón visible Pausar/Reanudar, pausa al pasar
+    // el puntero o enfocar con teclado, y sin avance automático si el sistema
+    // pide movimiento reducido. Cada foto activa se anuncia como botón "Ampliar".
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+    window.__carPause = { mega: reduce, dev: reduce };
+    [['mega','megaGallery','Proyectos'],['dev','devGallery','Proyectos en desarrollo']].forEach(function(c){
+      var key = c[0], gallery = document.getElementById(c[1]);
+      if(!gallery) return;
+      var band = gallery.parentNode;
+      var manual = reduce, hover = false;
+      Array.prototype.forEach.call(gallery.querySelectorAll('img'), function(img){
+        img.setAttribute('role', 'button');
+        img.setAttribute('aria-label', 'Ampliar foto de ' + (img.dataset.project || 'proyecto'));
+      });
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'car-pause';
+      function sync(){
+        window.__carPause[key] = manual || hover;
+        btn.setAttribute('aria-pressed', String(manual));
+        btn.setAttribute('aria-label', (manual ? 'Reanudar carrusel: ' : 'Pausar carrusel: ') + c[2]);
+        btn.textContent = manual ? '▶ Reanudar' : '❚❚ Pausar';
+      }
+      btn.addEventListener('click', function(){ manual = !manual; sync(); });
+      band.appendChild(btn);
+      if(canHover){
+        band.addEventListener('mouseenter', function(){ hover = true; sync(); });
+        band.addEventListener('mouseleave', function(){ hover = false; sync(); });
+      }
+      band.addEventListener('focusin', function(){ hover = true; sync(); });
+      band.addEventListener('focusout', function(){ hover = false; sync(); });
+      sync();
+    });
+  })();
+</script>
+
+<script>
+  (function(){
+    // Menú móvil
+    var toggle = document.getElementById('navToggle');
+    var links = document.getElementById('navLinks');
+    if(!toggle || !links) return;
+    function setOpen(open){
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    }
+    toggle.addEventListener('click', function(){ setOpen(!links.classList.contains('open')); });
+    links.addEventListener('click', function(e){ if(e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && links.classList.contains('open')){ setOpen(false); toggle.focus(); }
+    });
+    window.addEventListener('resize', function(){ if(window.innerWidth > 780) setOpen(false); });
+  })();
+</script>
+
 
 <script>
   (function(){
