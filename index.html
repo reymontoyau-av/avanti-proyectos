@@ -595,7 +595,7 @@
   @media (max-width:800px){ .about-grid{grid-template-columns:1fr;} }
 
   /* ---------- SERVICES ---------- */
-  .services{ padding:14px 0; background:var(--gray-100); }
+  .services{ padding:14px 0 0; background:var(--gray-100); }
   .service-list{}
   .service-row{
     display:grid;
@@ -614,19 +614,28 @@
   }
 
   /* ---------- CTA ---------- */
+  /* El llamado a la acción es el cierre de Servicios: franja oscura pegada
+     a la última fila (sin espacio blanco) y alineada a la misma grilla de
+     la lista: filete dorado en la columna del número, pregunta al centro y
+     correo a la derecha. Al ir a #servicios se ven juntos en una vista.
+     --cta-min lo calcula el JS para que Servicios + llamado + pie llenen
+     la pantalla y el enlace pueda dejar Servicios arriba. */
   .cta{
     background:var(--navy-800);
     color:#fff;
-    padding:20px 0;
-    text-align:center;
-    /* Contacto + pie de página llenan la pantalla: al ir a #contacto el
-       llamado queda arriba como sección propia, no pegado a Servicios.
-       --foot-h lo mide el JS (el pie cambia de alto según el ancho). */
-    min-height:calc(100svh - 64px - var(--foot-h, 0px));
+    padding:32px 0;
+    min-height:var(--cta-min, 0px);
     display:flex; flex-direction:column; justify-content:center;
   }
-  .cta h2{ color:#fff; font-size:clamp(26px,4vw,40px); max-width:640px; margin:0 auto 14px; text-wrap:balance; }
-  .cta p{ color:var(--slate-300); max-width:480px; margin:0 auto 20px; font-size:16px; }
+  .cta-grid{ display:grid; grid-template-columns:44px 1fr auto; gap:24px; align-items:center; width:100%; box-sizing:border-box; }
+  .cta-mark{ width:28px; height:2px; background:var(--dorado); align-self:center; }
+  .cta h2{ color:#fff; font-size:clamp(24px,3vw,32px); line-height:1.2; max-width:640px; margin:0 0 8px; text-wrap:balance; }
+  .cta p{ color:var(--slate-300); max-width:520px; margin:0; font-size:16px; }
+  @media (max-width:760px){
+    .cta-grid{ grid-template-columns:32px 1fr; gap:16px; }
+    .cta-mark{ align-self:start; margin-top:14px; }
+    .cta-grid .btn-primary{ grid-column:2; justify-self:start; }
+  }
 
   /* ---------- FOOTER ---------- */
   footer{
@@ -965,7 +974,7 @@
       </div>
     </div>
     <div class="hero-actions">
-      <a href="#contacto" class="btn-primary btn-hero">Conversemos sobre tu proyecto</a>
+      <a href="#servicios" class="btn-primary btn-hero">Conversemos sobre tu proyecto</a>
     </div>
     <div class="hero-stats hero-stats--4">
       <div class="stat"><b data-count="21">+21</b><span>años de experiencia</span></div>
@@ -1106,9 +1115,12 @@
 
 
 <section class="cta" id="contacto">
-  <div class="wrap reveal">
-    <h2>¿Tienes un lote o un proyecto en mente?</h2>
-    <p>Cuéntanos en qué etapa estás y conversemos sobre cómo desarrollarlo.</p>
+  <div class="wrap reveal cta-grid">
+    <span class="cta-mark" aria-hidden="true"></span>
+    <div>
+      <h2>¿Tienes un lote o un proyecto en mente?</h2>
+      <p>Cuéntanos en qué etapa estás y conversemos sobre cómo desarrollarlo.</p>
+    </div>
     <a href="mailto:contacto@avantiproyectos.com" class="btn-primary">contacto@avantiproyectos.com</a>
   </div>
 </section>
@@ -1958,10 +1970,17 @@
 
 <script>
   (function(){
-    // Mide el pie de página para que Contacto + pie llenen la pantalla.
+    // Servicios + llamado a la acción + pie deben llenar la pantalla (bajo el
+    // menú de 64 px) para que "Conversemos sobre tu proyecto" deje Servicios
+    // arriba; si falta altura, el llamado crece y centra su contenido.
     var foot = document.querySelector('footer');
-    if(!foot) return;
-    function set(){ document.documentElement.style.setProperty('--foot-h', foot.offsetHeight + 'px'); }
+    var serv = document.getElementById('servicios');
+    var cta = document.getElementById('contacto');
+    if(!foot || !serv || !cta) return;
+    function set(){
+      var need = window.innerHeight - 64 - foot.offsetHeight - serv.offsetHeight;
+      cta.style.setProperty('--cta-min', Math.max(0, Math.ceil(need)) + 'px');
+    }
     set();
     window.addEventListener('resize', set);
     if(document.fonts && document.fonts.ready) document.fonts.ready.then(set);
