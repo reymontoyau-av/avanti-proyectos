@@ -734,7 +734,7 @@
   /* ---------- HERO: capítulos animados en rotación ---------- */
   .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
   .hero-chapters{ max-width:820px; }
-  .chap-nav{ display:flex; align-items:stretch; gap:0 24px; flex-wrap:wrap; margin-bottom:16px; }
+  .chap-nav{ display:flex; align-items:stretch; gap:0 24px; flex-wrap:wrap; margin-bottom:0; }
   .chap-tab{
     position:relative; display:flex; align-items:baseline; gap:8px;
     background:none; border:0; padding:12px 0; min-height:44px;
@@ -745,20 +745,24 @@
   .chap-tab::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:rgba(211,211,215,.25); }
   .chap-bar{ position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--dorado); transform:scaleX(0); transform-origin:left center; z-index:1; }
   .chap-tab.is-active{ opacity:1; color:#fff; }
-  .chap-tab.is-active .chap-bar{ animation:chapFill var(--chap-dur, 7s) linear forwards; }
+  /* La barra la mueve el JS en sincronía con el desplazamiento continuo */
   .chap-tab.is-done .chap-bar{ transform:scaleX(1); }
-  .hero-chapters.is-paused .chap-tab.is-active .chap-bar{ animation-play-state:paused; }
-  @keyframes chapFill{ to{ transform:scaleX(1); } }
   @media (hover:hover) and (pointer:fine){ .chap-tab:hover{ opacity:1; } }
 
-  /* Carrusel de textos vertical, como un teleprompter: el capítulo leído sube
-     y se desvanece; el siguiente surge desde abajo y sus letras suben. Todo
-     se mueve en la dirección de la lectura. La altura la fija el JS con el
-     capítulo más alto, para que nada de abajo se mueva. */
-  .chap-stage{ overflow:hidden; touch-action:pan-y; }
-  .chap-track{ display:flex; flex-direction:column; transition:transform .9s var(--ease-stack); }
-  .chap{ flex:0 0 auto; min-width:0; opacity:0; transition:opacity .5s ease; }
-  .chap.is-active{ opacity:1; transition:opacity .6s ease .15s; }
+  /* Teleprompter continuo: los capítulos suben sin detenerse a velocidad
+     constante (el JS mueve la columna cuadro a cuadro). Cada capítulo surge
+     desde abajo con sus letras subiendo y se desvanece al salir por arriba,
+     gracias al difuminado de los bordes. Cada capítulo mide lo mismo (el
+     más alto) y lleva un margen igual al difuminado, para que al estar
+     centrado se lea completo y nada de abajo se mueva. */
+  .chap-stage{
+    overflow:hidden; touch-action:pan-y;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+            mask-image:linear-gradient(to bottom, transparent 0, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+    --fade:28px;
+  }
+  .chap-track{ display:flex; flex-direction:column; will-change:transform; }
+  .chap{ flex:0 0 auto; min-width:0; padding:var(--fade, 28px) 0; box-sizing:border-box; }
   .chap-track.no-anim, .chap-track.no-anim *{ transition:none !important; }
   .chap-title{
     font-family:'Poppins', sans-serif; font-weight:600;
@@ -791,9 +795,7 @@
   @media (prefers-reduced-motion: reduce){
     .m > span, .chap .m > span, .chap.is-active .m > span{ transform:none !important; transition:none !important; }
     .chap-text{ opacity:1; transform:none; transition:none !important; }
-    .chap-track{ transition:none; }
-    .chap, .chap.is-active{ transition:opacity .15s ease; }
-    .chap-tab.is-active .chap-bar{ animation:none; transform:scaleX(1); }
+    .chap-tab.is-active .chap-bar{ transform:scaleX(1); }
     .sec-head .sec-num, .sec-head::after{ transform:none; opacity:1; transition:none; }
   }
 
@@ -1825,11 +1827,16 @@
       });
     }
 
-    // ---------- Capítulos del hero: carrusel de textos ----------
-    // Rotan solos; la barra de cada pestaña marca el tiempo y al llenarse
-    // pasa al siguiente. Sin botón de pausa: se detiene con el puntero
-    // encima, con el foco dentro o al tocar/deslizar (se reanuda tras 10 s
-    // sin uso). Deslizar o las flechas del teclado adelantan o devuelven.
+    // ---------- Capítulos del hero: teleprompter continuo ----------
+    // La columna de capítulos sube sin detenerse a velocidad constante (un
+    // capítulo cada ~7 s), con un clon del primero al final para que el
+    // bucle no tenga costura. Cada capítulo anima sus letras al asomar por
+    // abajo y se reinicia cuando ya salió por arriba. La barra de la
+    // pestaña avanza con el desplazamiento.
+    // Sin botón de pausa: el puntero encima, el foco dentro o un toque
+    // frenan el movimiento con suavidad (se reanuda tras 10 s sin uso).
+    // Pestañas, flechas y deslizar llevan con un recorrido suave a otro
+    // capítulo. Con movimiento reducido no hay desplazamiento continuo.
     var root = document.getElementById('heroChapters');
     if(root){
       var tabs = root.querySelectorAll('.chap-tab');
@@ -1841,74 +1848,106 @@
         split(c.querySelector('.chap-title'), 'chars');
         split(c.querySelector('.chap-tag'), 'words');
       });
-      // Clon del primer capítulo al final: el paso del último al primero
-      // también se desliza hacia la izquierda, como un carrusel sin fin.
       var clone = chaps[0].cloneNode(true);
       clone.setAttribute('aria-hidden', 'true');
       track.appendChild(clone);
       chaps.push(clone);
 
-      var pos = 0, hover = false, touched = false, idle = null, busy = false, H = 0;
-      // Todos los capítulos con la altura del más alto: el paso es exacto y
-      // los botones e indicadores de abajo nunca se mueven.
+      var SECS = 7;                 // segundos por capítulo
+      var SLOW_AVG = 1 - 0.8 * 0.08 * Math.sqrt(Math.PI); // velocidad media con la pausa leve
+      var H = 0, offset = 0, vel = 1, hover = false, touched = false, idle = null;
+      var tween = null, last = 0, shownCur = -1;
+
       function measure(){
         chaps.forEach(function(c){ c.style.height = 'auto'; });
         H = Math.max.apply(null, chaps.map(function(c){ return c.offsetHeight; }));
         chaps.forEach(function(c){ c.style.height = H + 'px'; });
         stage.style.height = H + 'px';
       }
-      function paint(instant){
-        if(instant) track.classList.add('no-anim');
-        track.style.transform = 'translateY(' + (-pos * H) + 'px)';
+      function held(){ return hover || touched || document.hidden; }
+
+      // Dibuja la posición actual: columna, letras que asoman, pestañas.
+      function draw(instant){
+        var L = N * H, wrapped = false;
+        if(offset >= L){ offset -= L; wrapped = true; }
+        if(offset < 0){ offset += L; wrapped = true; }
+        if(instant || wrapped) track.classList.add('no-anim');
+        track.style.transform = 'translateY(' + (-offset) + 'px)';
+        var top = offset / H;
         chaps.forEach(function(c, k){
-          c.classList.toggle('is-active', k === pos);
-          if(k < N) c.setAttribute('aria-hidden', String(k !== pos % N));
+          // asoma: su borde superior ya entró por abajo; sale: ya pasó arriba
+          var visible = (k * H < offset + H * 0.92) && ((k + 1) * H > offset + H * 0.08);
+          if(visible && !c.classList.contains('is-active')) c.classList.add('is-active');
+          else if(!visible && c.classList.contains('is-active')) c.classList.remove('is-active');
         });
-        var t = pos % N;
+        var cur = Math.round(top) % N;
+        var frac = (top + 0.5) % 1;
         tabs.forEach(function(tab, k){
-          tab.classList.remove('is-active');
-          tab.classList.toggle('is-done', k < t);
-          tab.setAttribute('aria-current', k === t ? 'true' : 'false');
-          tab.tabIndex = k === t ? 0 : -1;
+          tab.classList.toggle('is-active', k === cur);
+          tab.classList.toggle('is-done', k < cur);
+          tab.setAttribute('aria-current', k === cur ? 'true' : 'false');
+          tab.tabIndex = k === cur ? 0 : -1;
+          tab.querySelector('.chap-bar').style.transform = k === cur ? 'scaleX(' + frac.toFixed(4) + ')' : '';
         });
-        void root.offsetWidth; // reinicia la barra de progreso
-        tabs[t].classList.add('is-active');
-        if(instant){ void track.offsetWidth; track.classList.remove('no-anim'); }
+        if(cur !== shownCur){
+          shownCur = cur;
+          chaps.forEach(function(c, k){ if(k < N) c.setAttribute('aria-hidden', String(k !== cur)); });
+        }
+        // al cerrar el bucle, el capítulo real toma el estado del clon sin
+        // volver a animar sus letras (el salto es invisible)
+        if(instant || wrapped){ void track.offsetWidth; track.classList.remove('no-anim'); }
       }
-      function go(next){
-        if(busy) return;
-        if(next < 0){ pos = N; paint(true); next = N - 1; } // del primero al último, hacia atrás
-        pos = next; busy = true;
-        paint(false);
-        setTimeout(function(){
-          busy = false;
-          if(pos === N){ pos = 0; paint(true); }
-        }, 900);
+
+      // Recorrido suave hacia un capítulo (pestaña, flecha o deslizar).
+      function goTo(k, dir){
+        var L = N * H, target = k * H, d = target - offset;
+        if(dir > 0 && d <= 0) d += L;           // siempre hacia adelante
+        if(dir < 0 && d >= 0) d -= L;           // siempre hacia atrás
+        if(!dir){ if(d > L / 2) d -= L; if(d < -L / 2) d += L; }
+        tween = { from: offset, d: d, t0: performance.now(), dur: 900 };
+        if(reduce){ offset = target; tween = null; draw(true); }
       }
-      function sync(){
-        root.classList.toggle('is-paused', reduce || hover || touched || document.hidden);
-        stage.setAttribute('aria-live', (hover || touched) ? 'polite' : 'off');
+      function step(dir){ var cur = Math.round(offset / H) % N; goTo((cur + dir + N) % N, dir); }
+
+      function frame(now){
+        var dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+        last = now;
+        if(tween){
+          var k = Math.min(1, (now - tween.t0) / tween.dur);
+          var e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; // entrada y salida suaves
+          offset = tween.from + tween.d * e;
+          if(k >= 1) tween = null;
+        } else if(!reduce && H){
+          // la velocidad sube y baja con suavidad al frenar o reanudar
+          vel += ((held() ? 0 : 1) - vel) * Math.min(1, dt * 4);
+          // Pausa muy leve: al quedar un capítulo centrado el movimiento se
+          // ralentiza un instante (a 1/5 de su ritmo, sin detenerse) y luego
+          // recupera la velocidad. SLOW_AVG compensa para que cada capítulo
+          // siga durando SECS en promedio.
+          var ph = offset / H, dist = Math.abs(ph - Math.round(ph));
+          var ease = 1 - 0.8 * Math.exp(-Math.pow(dist / 0.08, 2));
+          offset += vel * ease / SLOW_AVG * (H / SECS) * dt;
+        }
+        draw(false);
+        requestAnimationFrame(frame);
       }
+
       function hold(){
-        touched = true; sync();
+        touched = true;
         clearTimeout(idle);
-        idle = setTimeout(function(){ touched = false; sync(); }, 10000);
+        idle = setTimeout(function(){ touched = false; }, 10000);
       }
       tabs.forEach(function(tab, k){
-        tab.querySelector('.chap-bar').addEventListener('animationend', function(){
-          if(k === pos % N && !reduce) go(pos + 1);
-        });
-        tab.addEventListener('click', function(){ hold(); if(k !== pos % N) go(k); });
+        tab.addEventListener('click', function(){ hold(); goTo(k, 0); });
       });
-      // Teclado: flechas entre pestañas (patrón de pestañas con foco itinerante).
       root.querySelector('.chap-nav').addEventListener('keydown', function(e){
         if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
         e.preventDefault(); hold();
-        var t = (pos % N + (e.key === 'ArrowRight' ? 1 : N - 1)) % N;
-        go(t === 0 && e.key === 'ArrowRight' ? N : t);
+        var dir = e.key === 'ArrowRight' ? 1 : -1;
+        var t = (Math.round(offset / H) % N + dir + N) % N;
+        goTo(t, dir);
         tabs[t].focus();
       });
-      // Deslizar sobre el texto: umbral por distancia o por velocidad.
       var st = null;
       stage.addEventListener('pointerdown', function(e){
         if(st) return;
@@ -1918,26 +1957,24 @@
       stage.addEventListener('pointerup', function(e){
         if(!st || e.pointerId !== st.id) return;
         var dx = e.clientX - st.x, dy = e.clientY - st.y;
-        var vel = Math.abs(dx) / Math.max(1, performance.now() - st.t);
+        var v = Math.abs(dx) / Math.max(1, performance.now() - st.t);
         st = null;
-        if(Math.abs(dx) > Math.abs(dy) && (Math.abs(dx) >= 40 || (Math.abs(dx) > 10 && vel > 0.11))){
-          go(dx < 0 ? pos + 1 : pos - 1);
-        }
+        if(Math.abs(dx) > Math.abs(dy) && (Math.abs(dx) >= 40 || (Math.abs(dx) > 10 && v > 0.11))) step(dx < 0 ? 1 : -1);
       });
       stage.addEventListener('pointercancel', function(){ st = null; });
       if(window.matchMedia('(hover: hover)').matches){
-        root.addEventListener('mouseenter', function(){ hover = true; sync(); });
-        root.addEventListener('mouseleave', function(){ hover = false; sync(); });
+        root.addEventListener('mouseenter', function(){ hover = true; });
+        root.addEventListener('mouseleave', function(){ hover = false; });
       }
-      root.addEventListener('focusin', function(){ hover = true; sync(); });
-      root.addEventListener('focusout', function(){ hover = false; sync(); });
-      document.addEventListener('visibilitychange', sync);
+      root.addEventListener('focusin', function(){ hover = true; stage.setAttribute('aria-live', 'polite'); });
+      root.addEventListener('focusout', function(){ hover = false; stage.setAttribute('aria-live', 'off'); });
+
       measure();
-      sync();
-      paint(true);
-      function remeasure(){ measure(); paint(true); }
+      draw(true);
+      function remeasure(){ var p = H ? offset / H : 0; measure(); offset = p * H; draw(true); }
       window.addEventListener('resize', remeasure);
       if(document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+      requestAnimationFrame(frame);
     }
 
     // ---------- Indicadores: conteo ascendente ----------
