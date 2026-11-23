@@ -767,6 +767,24 @@
   .chap-title{
     font-family:'Poppins', sans-serif; font-weight:600;
     font-size:clamp(38px, 6vw, 64px); line-height:1.1; color:#fff; letter-spacing:-.01em;
+    transform-origin:left bottom; will-change:transform, opacity; /* profundidad: la ajusta el JS */
+  }
+  /* Filete dorado bajo cada título: se dibuja de izquierda a derecha
+     cuando terminan de subir las letras (mismo filete de los apartados). */
+  .chap-title::after{
+    content:""; display:block; width:64px; height:2px; margin-top:10px;
+    background:var(--dorado); transform:scaleX(0); transform-origin:left center;
+    transition:transform 0s linear .9s; /* se reinicia ya invisible */
+  }
+  .chap.is-active .chap-title::after{ transform:scaleX(1); transition:transform .8s cubic-bezier(.16,1,.3,1) .5s; }
+  /* Letras del título que se enfocan: suben saliendo de un desenfoque.
+     La máscara se ensancha un poco para que el desenfoque no se recorte. */
+  .chap-title .m{ padding:0 .06em .08em; margin:0 -.06em -.08em; }
+  .chap .chap-title .m > span{ filter:blur(10px); opacity:0; transition:transform 0s linear .9s, filter 0s linear .9s, opacity 0s linear .9s; }
+  .chap.is-active .chap-title .m > span{
+    filter:blur(0); opacity:1;
+    transition:transform .7s cubic-bezier(.16,1,.3,1), filter .7s cubic-bezier(.16,1,.3,1), opacity .5s ease;
+    transition-delay:calc(var(--i) * 28ms);
   }
   .chap-tag{ margin-top:4px; font-size:clamp(20px, 2.6vw, 30px); line-height:1.2; color:var(--slate-300); font-weight:400; }
   .chap-text{ margin-top:8px; max-width:65ch; color:var(--slate-300); font-size:16px; line-height:1.6; }
@@ -794,6 +812,9 @@
 
   @media (prefers-reduced-motion: reduce){
     .m > span, .chap .m > span, .chap.is-active .m > span{ transform:none !important; transition:none !important; }
+    .chap .chap-title .m > span{ filter:none !important; opacity:1 !important; }
+    .chap-title{ transform:none !important; opacity:1 !important; }
+    .chap-title::after{ transform:scaleX(1); transition:none; }
     .chap-text{ opacity:1; transform:none; transition:none !important; }
     .chap-tab.is-active .chap-bar{ transform:scaleX(1); }
     .sec-head .sec-num, .sec-head::after{ transform:none; opacity:1; transition:none; }
@@ -1879,6 +1900,14 @@
           var visible = (k * H < offset + H * 0.92) && ((k + 1) * H > offset + H * 0.08);
           if(visible && !c.classList.contains('is-active')) c.classList.add('is-active');
           else if(!visible && c.classList.contains('is-active')) c.classList.remove('is-active');
+        });
+        // Profundidad: el título está a tamaño y brillo completos al pasar por
+        // el centro y se achica y atenúa levemente hacia los bordes.
+        if(!reduce) chaps.forEach(function(c, k){
+          var f = Math.max(0, 1 - Math.abs(k * H - offset) / H);   // 1 en el centro, 0 fuera
+          var t = c._t || (c._t = c.querySelector('.chap-title'));
+          t.style.transform = 'scale(' + (0.92 + 0.08 * f).toFixed(4) + ')';
+          t.style.opacity = (0.45 + 0.55 * f).toFixed(3);
         });
         var cur = Math.round(top) % N;
         var frac = (top + 0.5) % 1;
