@@ -201,7 +201,7 @@
   }
   .btn-primary:hover{ background:var(--gray-200); }
   /* Botones del hero: sin marco, solo la línea inferior */
-  .btn-primary.btn-hero, .btn-ghost{
+  .btn-primary.btn-hero{
     background:none;
     border:0;
     border-bottom:1px solid rgba(211,211,215,.4);
@@ -211,10 +211,8 @@
     transition:border-color .2s ease, color .2s ease;
   }
   .btn-primary.btn-hero{ color:var(--dorado); font-weight:600; border-bottom-color:rgba(236,190,122,.55); }
-  .btn-ghost{ color:#fff; }
   @media (hover:hover) and (pointer:fine){
     .btn-primary.btn-hero:hover{ background:none; border-bottom-color:var(--dorado); }
-    .btn-ghost:hover{ border-bottom-color:#fff; }
   }
 
   .hero-stats{
@@ -950,7 +948,6 @@
     </div>
     <div class="hero-actions">
       <a href="#contacto" class="btn-primary btn-hero">Conversemos sobre tu proyecto</a>
-      <a href="#servicios" class="btn-ghost">Qué hacemos</a>
     </div>
     <div class="hero-stats hero-stats--4">
       <div class="stat"><b data-count="21">+21</b><span>años de experiencia</span></div>
@@ -1399,11 +1396,12 @@
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
 
-    // Clona la primera foto al final y las últimas 3 al inicio: así el mazo
-    // apilado a la izquierda se ve igual antes y después del salto de vuelta
-    // al inicio, y el bucle es imperceptible: carrusel sin fin.
-    var PRE = Math.min(3, n);
-    var CLONE_COUNT = Math.min(1, n);
+    // Clona las primeras 8 fotos al final y las últimas 8 al inicio: así el
+    // mazo de la izquierda y la fila de la derecha se ven iguales antes y
+    // después del salto de vuelta, en ambos sentidos, incluso con varios
+    // toques seguidos: carrusel sin fin. (Son copias de imágenes ya cargadas.)
+    var PRE = Math.min(8, n);
+    var CLONE_COUNT = Math.min(8, n);
     for(var c = 0; c < CLONE_COUNT; c++){
       var clone = imgs[c].cloneNode(true);
       clone.classList.add('proj-clone');
@@ -1445,19 +1443,36 @@
     }
     render(true);
 
-    var AUTOPLAY_MS = 4200, busy = false;
-    // Avanza (+1) o retrocede (-1). Al llegar a un clon, cuando termina la
-    // transición se salta sin animación a la foto real equivalente: el
-    // bucle no se nota en ningún sentido.
+    var AUTOPLAY_MS = 4200;
+    // Avanza (+1) o retrocede (-1). Se puede interrumpir: un toque nuevo
+    // durante la animación la redirige al instante (las transiciones CSS
+    // se reorientan sin saltar). Al retroceder, la foto que se va se
+    // mantiene ENCIMA mientras se desliza a la derecha y descubre la de
+    // abajo, como al devolver una carta al mazo (el orden de capas no se
+    // anima, por eso se fija hasta que termina el movimiento). Cuando todo
+    // se detiene, si se quedó en un clon, salta sin animación a la foto
+    // real equivalente: el bucle no se nota en ningún sentido.
+    var settle = null, lifted = [];
     function move(delta){
-      if(busy) return;
-      busy = true;
-      activeIndex += delta;
+      var next = activeIndex + delta;
+      if(next < 0 || next > imgs.length - 1){
+        // Muchos toques seguidos agotaron los clones: salta a la foto real
+        // equivalente (idéntica) y continúa desde ahí.
+        activeIndex += (activeIndex >= PRE + n) ? -n : n;
+        lifted = [];
+        render(true);
+        next = activeIndex + delta;
+      }
+      if(delta < 0) lifted.push(imgs[activeIndex]); else lifted = [];
+      activeIndex = next;
       render(false);
-      setTimeout(function(){
-        busy = false;
-        if(activeIndex >= PRE + n){ activeIndex -= n; render(true); }
-        else if(activeIndex < PRE){ activeIndex += n; render(true); }
+      lifted.forEach(function(el){ el.style.zIndex = 30; });
+      clearTimeout(settle);
+      settle = setTimeout(function(){
+        lifted = [];
+        if(activeIndex >= PRE + n) activeIndex -= n;
+        else if(activeIndex < PRE) activeIndex += n;
+        render(true);
       }, 900);
     }
     function tick(){
@@ -1508,19 +1523,19 @@
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
 
-    // Clona las primeras 2 fotos y las agrega al final, para que la pareja
-    // (última, primera-clonada) se vea igual que (primera, segunda) real y
-    // el salto de vuelta al inicio sea imperceptible: carrusel sin fin.
-    var CLONE_COUNT = Math.min(2, n);
+    // Clona las primeras 9 fotos al final (la pareja visible + margen para
+    // varios toques seguidos), para que el salto de vuelta al inicio sea
+    // imperceptible: carrusel sin fin. (Son copias de imágenes ya cargadas.)
+    var CLONE_COUNT = Math.min(9, n);
     for(var c = 0; c < CLONE_COUNT; c++){
       var clone = imgs[c].cloneNode(true);
       clone.classList.add('dev-clone');
       track.appendChild(clone);
       imgs.push(clone);
     }
-    // Y las últimas 3 al inicio, para que el mazo apilado a la izquierda
-    // sea idéntico antes y después del salto de vuelta.
-    var PRE = Math.min(3, n);
+    // Y las últimas 8 al inicio, para que el mazo de la izquierda sea
+    // idéntico antes y después del salto de vuelta, también al retroceder.
+    var PRE = Math.min(8, n);
     for(var p = 0; p < PRE; p++){
       var pre = imgs[n - 1 - p].cloneNode(true);
       pre.classList.add('dev-clone');
@@ -1560,18 +1575,36 @@
     }
     render(true);
 
-    var DEV_AUTOPLAY_MS = 4200, busy = false;
-    // Avanza (+1) o retrocede (-1); en los clones salta sin animación a la
-    // pareja real equivalente al terminar la transición: bucle invisible.
+    var DEV_AUTOPLAY_MS = 4200;
+    // Avanza (+1) o retrocede (-1). Se puede interrumpir: un toque nuevo
+    // durante la animación la redirige al instante (las transiciones CSS
+    // se reorientan sin saltar). Al retroceder, la foto que se va se
+    // mantiene ENCIMA mientras se desliza a la derecha y descubre la de
+    // abajo, como al devolver una carta al mazo (el orden de capas no se
+    // anima, por eso se fija hasta que termina el movimiento). Cuando todo
+    // se detiene, si se quedó en un clon, salta sin animación a la foto
+    // real equivalente: el bucle no se nota en ningún sentido.
+    var settle = null, lifted = [];
     function move(delta){
-      if(busy) return;
-      busy = true;
-      activeIndex += delta;
+      var next = activeIndex + delta;
+      if(next < 0 || next > imgs.length - 2){
+        // Muchos toques seguidos agotaron los clones: salta a la foto real
+        // equivalente (idéntica) y continúa desde ahí.
+        activeIndex += (activeIndex >= PRE + n) ? -n : n;
+        lifted = [];
+        render(true);
+        next = activeIndex + delta;
+      }
+      if(delta < 0) lifted.push(imgs[activeIndex]); else lifted = [];
+      activeIndex = next;
       render(false);
-      setTimeout(function(){
-        busy = false;
-        if(activeIndex >= PRE + n){ activeIndex -= n; render(true); }
-        else if(activeIndex < PRE){ activeIndex += n; render(true); }
+      lifted.forEach(function(el){ el.style.zIndex = 30; });
+      clearTimeout(settle);
+      settle = setTimeout(function(){
+        lifted = [];
+        if(activeIndex >= PRE + n) activeIndex -= n;
+        else if(activeIndex < PRE) activeIndex += n;
+        render(true);
       }, 900);
     }
     function devTick(){
