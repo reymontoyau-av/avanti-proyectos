@@ -769,14 +769,19 @@
     font-size:clamp(38px, 6vw, 64px); line-height:1.1; color:#fff; letter-spacing:-.01em;
     transform-origin:left bottom; will-change:transform, opacity; /* profundidad: la ajusta el JS */
   }
-  /* Filete dorado bajo cada título: se dibuja de izquierda a derecha
-     cuando terminan de subir las letras (mismo filete de los apartados). */
+  /* Filete dorado vertical a la izquierda de cada título: se dibuja de
+     arriba hacia abajo cuando terminan de subir las letras. Va en el margen
+     (fuera de la columna de texto), por eso el escenario se extiende a la
+     izquierda lo mismo que el filete, para que no se recorte. */
+  .chap-stage{ --rail:20px; margin-left:calc(-1 * var(--rail)); padding-left:var(--rail); }
+  @media (max-width:640px){ .chap-stage{ --rail:14px; } }
+  .chap-title{ position:relative; }
   .chap-title::after{
-    content:""; display:block; width:64px; height:2px; margin-top:10px;
-    background:var(--dorado); transform:scaleX(0); transform-origin:left center;
+    content:""; position:absolute; left:calc(-1 * var(--rail) + 2px); top:.16em; bottom:.12em; width:2px;
+    background:var(--dorado); transform:scaleY(0); transform-origin:center top;
     transition:transform 0s linear .9s; /* se reinicia ya invisible */
   }
-  .chap.is-active .chap-title::after{ transform:scaleX(1); transition:transform .8s cubic-bezier(.16,1,.3,1) .5s; }
+  .chap.is-active .chap-title::after{ transform:scaleY(1); transition:transform .8s cubic-bezier(.16,1,.3,1) .5s; }
   /* Letras del título que se enfocan: suben saliendo de un desenfoque.
      La máscara se ensancha un poco para que el desenfoque no se recorte. */
   .chap-title .m{ padding:0 .06em .08em; margin:0 -.06em -.08em; }
@@ -814,7 +819,7 @@
     .m > span, .chap .m > span, .chap.is-active .m > span{ transform:none !important; transition:none !important; }
     .chap .chap-title .m > span{ filter:none !important; opacity:1 !important; }
     .chap-title{ transform:none !important; opacity:1 !important; }
-    .chap-title::after{ transform:scaleX(1); transition:none; }
+    .chap-title::after{ transform:scaleY(1); transition:none; }
     .chap-text{ opacity:1; transform:none; transition:none !important; }
     .chap-tab.is-active .chap-bar{ transform:scaleX(1); }
     .sec-head .sec-num, .sec-head::after{ transform:none; opacity:1; transition:none; }
