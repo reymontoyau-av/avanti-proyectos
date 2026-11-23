@@ -304,7 +304,7 @@
     justify-content:center;
     gap:14px;
     height:100%;
-    transition:transform .9s ease;
+    transition:transform .9s var(--ease-stack);
     will-change:transform;
   }
   .proj-track img{
@@ -319,7 +319,9 @@
     box-sizing:border-box;
     cursor:zoom-in;
     opacity:.35;
-    transition:opacity .6s ease;
+    transition:opacity .6s ease, transform .9s var(--ease-stack);
+    transform-origin:left center;
+    position:relative;
     pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
@@ -502,7 +504,7 @@
     align-items:stretch;
     gap:14px;
     height:100%;
-    transition:transform .9s ease;
+    transition:transform .9s var(--ease-stack);
     will-change:transform;
   }
   .dev-track img{
@@ -517,7 +519,9 @@
     box-sizing:border-box;
     cursor:default;
     opacity:.35;
-    transition:opacity .6s ease;
+    transition:opacity .6s ease, transform .9s var(--ease-stack);
+    transform-origin:left center;
+    position:relative;
     pointer-events:none;
     -webkit-user-drag:none;
     user-select:none;
@@ -729,6 +733,16 @@
       opacity:1; transform:none; animation:none;
     }
   }
+
+  /* Efecto apilado: la foto que sale queda debajo de la nueva, encogida y asomando.
+     Tira y fotos comparten duración y curva para moverse en sincronía. */
+  :root{ --ease-stack:cubic-bezier(.77,0,.175,1); }
+  @media (prefers-reduced-motion: reduce){
+    .proj-track, .dev-track{ transition:none !important; }
+    .proj-track img, .dev-track img{ transition:opacity .15s ease !important; }
+  }
+  .proj-track.no-anim, .proj-track.no-anim img,
+  .dev-track.no-anim, .dev-track.no-anim img{ transition:none !important; }
 
   /* ---------- Tratamiento cinematográfico de las fotos de los carruseles ---------- */
   .proj-track img,
@@ -1328,6 +1342,33 @@
 </script>
 
 <script>
+  // Efecto apilado horizontal compartido por los dos carruseles: las fotos que
+  // ya pasaron no se van de lado, se quedan debajo de la foto activa,
+  // encogidas y asomando por la izquierda como un mazo; las siguientes
+  // esperan en fila a la derecha, en transparencia.
+  window.__stackCards = function(track, imgs, anchor, activeCount, opts){
+    if(!imgs.length) return;
+    var w = imgs[0].offsetWidth;
+    var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    var peek = Math.round(w * (window.innerWidth < 640 ? opts.peekMobile : opts.peek));
+    var STACK = 3, SCALE = 0.06, OPAC = [1, .62, .4, .2];
+    imgs.forEach(function(img, i){
+      var d = anchor - i;
+      if(d >= 1){
+        var tx = d * (w + gap) - d * peek;
+        img.style.transform = 'translateX(' + tx + 'px) scale(' + (1 - SCALE * Math.min(d, STACK + 1)) + ')';
+        img.style.opacity = d <= STACK ? OPAC[d] : 0;
+        img.style.zIndex = 20 - d;
+      } else {
+        img.style.transform = '';
+        img.style.opacity = '';
+        img.style.zIndex = (i < anchor + activeCount) ? 20 : 10;
+      }
+    });
+  };
+</script>
+
+<script>
   (function(){
     // Carrusel único de proyectos: mismo mecanismo del carrusel de
     // "Proyectos en Desarrollo" (tira de fotos en fila que se desliza),
@@ -1349,14 +1390,22 @@
       img.addEventListener('dragstart', function(e){ e.preventDefault(); });
     });
 
-    // Clona la primera foto y la agrega al final, para que al llegar ahí
-    // el salto de vuelta al inicio sea imperceptible: carrusel sin fin.
+    // Clona la primera foto al final y las últimas 3 al inicio: así el mazo
+    // apilado a la izquierda se ve igual antes y después del salto de vuelta
+    // al inicio, y el bucle es imperceptible: carrusel sin fin.
+    var PRE = Math.min(3, n);
     var CLONE_COUNT = Math.min(1, n);
     for(var c = 0; c < CLONE_COUNT; c++){
       var clone = imgs[c].cloneNode(true);
       clone.classList.add('proj-clone');
       track.appendChild(clone);
       imgs.push(clone);
+    }
+    for(var p = 0; p < PRE; p++){
+      var pre = imgs[n - 1 - p].cloneNode(true);
+      pre.classList.add('proj-clone');
+      track.insertBefore(pre, track.firstChild);
+      imgs.unshift(pre);
     }
 
     function setCaption(img){
@@ -1365,7 +1414,7 @@
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
-    var activeIndex = 0;
+    var activeIndex = PRE;
 
     function render(instant){
       imgs.forEach(function(img, i){
@@ -1377,13 +1426,12 @@
       var active = imgs[activeIndex];
       var offset = active.offsetLeft + active.offsetWidth / 2 - gallery.clientWidth / 2;
 
+      if(instant) track.classList.add('no-anim');
+      track.style.transform = 'translateX(' + (-offset) + 'px)';
+      window.__stackCards(track, imgs, activeIndex, 1, { peek: .2, peekMobile: .07 });
       if(instant){
-        track.style.transition = 'none';
-        track.style.transform = 'translateX(' + (-offset) + 'px)';
         void track.offsetWidth; // fuerza reflow antes de reactivar la transición
-        track.style.transition = '';
-      } else {
-        track.style.transform = 'translateX(' + (-offset) + 'px)';
+        track.classList.remove('no-anim');
       }
     }
     render(true);
@@ -1393,12 +1441,12 @@
       if(window.__carPause && window.__carPause.mega) return;
       activeIndex++;
       render(false);
-      if(activeIndex === n){
+      if(activeIndex === PRE + n){
         // La foto mostrada ahora (clon) es visualmente idéntica a la
         // primera real: al terminar la transición, se reinicia el índice
         // sin animación, sin que se note el salto.
         setTimeout(function(){
-          activeIndex = 0;
+          activeIndex = PRE;
           render(true);
         }, 900);
       }
@@ -1453,6 +1501,15 @@
       track.appendChild(clone);
       imgs.push(clone);
     }
+    // Y las últimas 3 al inicio, para que el mazo apilado a la izquierda
+    // sea idéntico antes y después del salto de vuelta.
+    var PRE = Math.min(3, n);
+    for(var p = 0; p < PRE; p++){
+      var pre = imgs[n - 1 - p].cloneNode(true);
+      pre.classList.add('dev-clone');
+      track.insertBefore(pre, track.firstChild);
+      imgs.unshift(pre);
+    }
 
     function setCaption(img){
       titleEl.textContent = img.dataset.project || '';
@@ -1460,7 +1517,7 @@
       metaEl.innerHTML = parts.map(function(p){ return '<span>' + p + '</span>'; }).join('');
     }
 
-    var activeIndex = 0;
+    var activeIndex = PRE;
 
     function render(instant){
       imgs.forEach(function(img, i){
@@ -1476,13 +1533,12 @@
       var pairEnd = right.offsetLeft + right.offsetWidth;
       var offset = pairStart - (gallery.clientWidth - (pairEnd - pairStart)) / 2;
 
+      if(instant) track.classList.add('no-anim');
+      track.style.transform = 'translateX(' + (-offset) + 'px)';
+      window.__stackCards(track, imgs, activeIndex, 2, { peek: .26, peekMobile: .08 });
       if(instant){
-        track.style.transition = 'none';
-        track.style.transform = 'translateX(' + (-offset) + 'px)';
         void track.offsetWidth; // fuerza reflow antes de reactivar la transición
-        track.style.transition = '';
-      } else {
-        track.style.transform = 'translateX(' + (-offset) + 'px)';
+        track.classList.remove('no-anim');
       }
     }
     render(true);
@@ -1492,12 +1548,12 @@
       if(window.__carPause && window.__carPause.dev) return;
       activeIndex++;
       render(false);
-      if(activeIndex === n){
+      if(activeIndex === PRE + n){
         // La pareja mostrada ahora (clones) es visualmente idéntica a la
         // pareja real del inicio: al terminar la transición, se reinicia
         // el índice sin animación, sin que se note el salto.
         setTimeout(function(){
-          activeIndex = 0;
+          activeIndex = PRE;
           render(true);
         }, 900);
       }
