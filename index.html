@@ -606,6 +606,11 @@
     color:#fff;
     padding:20px 0;
     text-align:center;
+    /* Contacto + pie de página llenan la pantalla: al ir a #contacto el
+       llamado queda arriba como sección propia, no pegado a Servicios.
+       --foot-h lo mide el JS (el pie cambia de alto según el ancho). */
+    min-height:calc(100svh - 64px - var(--foot-h, 0px));
+    display:flex; flex-direction:column; justify-content:center;
   }
   .cta h2{ color:#fff; font-size:clamp(26px,4vw,40px); max-width:640px; margin:0 auto 14px; text-wrap:balance; }
   .cta p{ color:var(--slate-300); max-width:480px; margin:0 auto 20px; font-size:16px; }
@@ -1935,6 +1940,18 @@
 
     // ---------- Títulos de apartado: palabra a palabra ----------
     document.querySelectorAll('.sec-head h2, .cta h2').forEach(function(h){ split(h, 'words'); });
+  })();
+</script>
+
+<script>
+  (function(){
+    // Mide el pie de página para que Contacto + pie llenen la pantalla.
+    var foot = document.querySelector('footer');
+    if(!foot) return;
+    function set(){ document.documentElement.style.setProperty('--foot-h', foot.offsetHeight + 'px'); }
+    set();
+    window.addEventListener('resize', set);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(set);
   })();
 </script>
 
