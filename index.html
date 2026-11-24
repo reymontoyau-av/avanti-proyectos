@@ -150,21 +150,32 @@
     position:absolute; inset:0;
     z-index:0;
   }
+  /* Fondo del hero sin parpadeos: la foto nueva se decodifica antes de
+     mostrarse y aparece ENCIMA de la anterior, que se mantiene opaca debajo
+     hasta que termina el fundido (antes ambas se desvanecían a la vez y se
+     asomaba el fondo). Las fotos ocultas no ocupan capa ni animan. */
   .hero-bg-img{
     position:absolute; inset:0;
     width:100%; height:100%;
     object-fit:cover;
     opacity:0;
+    visibility:hidden;
     transform:scale(1.15);
-    transition:opacity 1.1s ease, transform 5s linear;
+    transition:none;
+    z-index:0;
   }
   .hero-bg-img.active{
+    visibility:visible;
     opacity:1;
     transform:scale(1);
+    z-index:2;
+    transition:opacity 1.1s ease, transform 5s linear;
   }
+  .hero-bg-img.active.leaving{ z-index:1; }
   .hero-bg::after{
     content:"";
     position:absolute; inset:0;
+    z-index:3; /* el velo oscuro siempre por encima de las fotos */
     background:linear-gradient(180deg, rgba(20,30,50,.88) 0%, rgba(20,30,50,.82) 55%, rgba(20,30,50,.94) 100%);
   }
   .hero-grid{
@@ -722,7 +733,10 @@
 
   /* Efecto apilado: la foto que sale queda debajo de la nueva, encogida y asomando.
      Tira y fotos comparten duración y curva para moverse en sincronía. */
-  :root{ --ease-stack:cubic-bezier(.77,0,.175,1); }
+  /* Curva suave de aceleración y frenado. La anterior (.77,0,.175,1) era
+     demasiado fuerte: la foto casi no se movía el primer tercio y luego
+     saltaba de golpe (~45 px por cuadro), lo que se veía como un tirón. */
+  :root{ --ease-stack:cubic-bezier(.35,0,.25,1); }
   @media (prefers-reduced-motion: reduce){
     .proj-track, .dev-track{ transition:none !important; }
     .proj-track img, .dev-track img{ transition:opacity .15s ease !important; }
@@ -966,15 +980,15 @@
 
 <section class="hero">
   <div class="hero-bg" id="heroBg">
-    <img class="hero-bg-img" src="assets/torres-makalu-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/torre-40-2.jpg" alt="">
-    <img class="hero-bg-img" src="assets/arboleda-del-campin-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/reserva-campestre-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/cipres-de-bella-suiza-2.jpg" alt="">
-    <img class="hero-bg-img" src="assets/robles-de-bella-suiza-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/urapanes-de-bella-suiza-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/mirador-de-estambul-1.jpg" alt="">
-    <img class="hero-bg-img" src="assets/torres-makalu-3.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/torres-makalu-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/torre-40-2.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/arboleda-del-campin-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/reserva-campestre-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/cipres-de-bella-suiza-2.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/robles-de-bella-suiza-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/urapanes-de-bella-suiza-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/mirador-de-estambul-1.jpg" alt="">
+    <img class="hero-bg-img" src="assets/web/torres-makalu-3.jpg" alt="">
   </div>
   <div class="hero-grid"></div>
   <div class="wrap">
@@ -1034,24 +1048,24 @@
     <div class="proj-gallery-band reveal">
       <div class="proj-gallery" id="megaGallery">
         <div class="proj-track" id="megaTrack">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-1.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-2.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-3.jpg" alt="Torres Makalú">
-        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/torres-makalu-4.jpg" alt="Torres Makalú">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-1.jpg" alt="Torre 40">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-2.jpg" alt="Torre 40">
-        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/torre-40-3.jpg" alt="Torre 40">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-1.jpg" alt="Arboleda del Campín">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-2.jpg" alt="Arboleda del Campín">
-        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/arboleda-del-campin-3.jpg" alt="Arboleda del Campín">
-        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/reserva-campestre-1.jpg" alt="Reserva Campestre">
-        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/reserva-campestre-2.jpg" alt="Reserva Campestre">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-1.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-2.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/cipres-de-bella-suiza-3.jpg" alt="Ciprés de Bella Suiza">
-        <img data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="assets/robles-de-bella-suiza-1.jpg" alt="Robles de Bella Suiza">
-        <img data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="assets/urapanes-de-bella-suiza-1.jpg" alt="Urapanes de Bella Suiza">
-        <img data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="assets/mirador-de-estambul-1.jpg" alt="Mirador de Estambul">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/web/torres-makalu-1.jpg" data-full="assets/torres-makalu-1.jpg" decoding="async" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/web/torres-makalu-2.jpg" data-full="assets/torres-makalu-2.jpg" decoding="async" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/web/torres-makalu-3.jpg" data-full="assets/torres-makalu-3.jpg" decoding="async" alt="Torres Makalú">
+        <img data-project="Torres Makalú" data-info="210 apartamentos · Constructora Olize" src="assets/web/torres-makalu-4.jpg" data-full="assets/torres-makalu-4.jpg" decoding="async" alt="Torres Makalú">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/web/torre-40-1.jpg" data-full="assets/torre-40-1.jpg" decoding="async" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/web/torre-40-2.jpg" data-full="assets/torre-40-2.jpg" decoding="async" alt="Torre 40">
+        <img data-project="Torre 40" data-info="155 apartamentos · Constructora Pranha Urbano" src="assets/web/torre-40-3.jpg" data-full="assets/torre-40-3.jpg" decoding="async" alt="Torre 40">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/web/arboleda-del-campin-1.jpg" data-full="assets/arboleda-del-campin-1.jpg" decoding="async" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/web/arboleda-del-campin-2.jpg" data-full="assets/arboleda-del-campin-2.jpg" decoding="async" alt="Arboleda del Campín">
+        <img data-project="Arboleda del Campín" data-info="110 apartamentos · Fdo. Jiménez" src="assets/web/arboleda-del-campin-3.jpg" data-full="assets/arboleda-del-campin-3.jpg" decoding="async" alt="Arboleda del Campín">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/web/reserva-campestre-1.jpg" data-full="assets/reserva-campestre-1.jpg" decoding="async" alt="Reserva Campestre">
+        <img data-project="Reserva Campestre" data-info="402 apartamentos · Constructora Pranha Urbano" src="assets/web/reserva-campestre-2.jpg" data-full="assets/reserva-campestre-2.jpg" decoding="async" alt="Reserva Campestre">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/web/cipres-de-bella-suiza-1.jpg" data-full="assets/cipres-de-bella-suiza-1.jpg" decoding="async" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/web/cipres-de-bella-suiza-2.jpg" data-full="assets/cipres-de-bella-suiza-2.jpg" decoding="async" alt="Ciprés de Bella Suiza">
+        <img data-project="Ciprés de Bella Suiza" data-info="532 apartamentos · Constructora Berlín" src="assets/web/cipres-de-bella-suiza-3.jpg" data-full="assets/cipres-de-bella-suiza-3.jpg" decoding="async" alt="Ciprés de Bella Suiza">
+        <img data-project="Robles de Bella Suiza" data-info="320 apartamentos · Constructora Berlín" src="assets/web/robles-de-bella-suiza-1.jpg" data-full="assets/robles-de-bella-suiza-1.jpg" decoding="async" alt="Robles de Bella Suiza">
+        <img data-project="Urapanes de Bella Suiza" data-info="582 apartamentos · Constructora Berlín" src="assets/web/urapanes-de-bella-suiza-1.jpg" data-full="assets/urapanes-de-bella-suiza-1.jpg" decoding="async" alt="Urapanes de Bella Suiza">
+        <img data-project="Mirador de Estambul" data-info="356 apartamentos · Constructora JYP" src="assets/web/mirador-de-estambul-1.jpg" data-full="assets/mirador-de-estambul-1.jpg" decoding="async" alt="Mirador de Estambul">
         </div>
       </div>
       <div class="proj-caption reveal" id="megaCaption">
@@ -1066,22 +1080,22 @@
     <div class="dev-gallery-band reveal">
       <div class="dev-gallery" id="devGallery">
         <div class="dev-track" id="devTrack">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-1.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-2.jpg" alt="Bellagio">
-          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/bellagio-3.jpg" alt="Bellagio">
-          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-1.jpg" alt="Nüa">
-          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/nua-2.jpg" alt="Nüa">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-1.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-2.jpg" alt="Solana Living">
-          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/solana-living-3.jpg" alt="Solana Living">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/torre-vita-1.jpg" alt="Torre Vita">
-          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/torre-vita-2.jpg" alt="Torre Vita">
-          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-1.jpg" alt="Bonanza">
-          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-2.jpg" alt="Bonanza">
-          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/bonanza-3.jpg" alt="Bonanza">
-          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/entreguaduas-1.jpg" alt="Entreguaduas">
-          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/entreguaduas-2.jpg" alt="Entreguaduas">
-          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/entreguaduas-3.jpg" alt="Entreguaduas">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/web/bellagio-1.jpg" data-full="assets/bellagio-1.jpg" decoding="async" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/web/bellagio-2.jpg" data-full="assets/bellagio-2.jpg" decoding="async" alt="Bellagio">
+          <img data-project="Bellagio" data-info="192 apartamentos · Constructora Olize" src="assets/web/bellagio-3.jpg" data-full="assets/bellagio-3.jpg" decoding="async" alt="Bellagio">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/web/nua-1.jpg" data-full="assets/nua-1.jpg" decoding="async" alt="Nüa">
+          <img data-project="Nüa" data-info="102 apartamentos · Constructora Pranha Urbano" src="assets/web/nua-2.jpg" data-full="assets/nua-2.jpg" decoding="async" alt="Nüa">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/web/solana-living-1.jpg" data-full="assets/solana-living-1.jpg" decoding="async" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/web/solana-living-2.jpg" data-full="assets/solana-living-2.jpg" decoding="async" alt="Solana Living">
+          <img data-project="Solana Living" data-info="96 apartamentos · Constructora Olize" src="assets/web/solana-living-3.jpg" data-full="assets/solana-living-3.jpg" decoding="async" alt="Solana Living">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/web/torre-vita-1.jpg" data-full="assets/torre-vita-1.jpg" decoding="async" alt="Torre Vita">
+          <img data-project="Torre Vita" data-info="64 apartamentos · Constructora Olize" src="assets/web/torre-vita-2.jpg" data-full="assets/torre-vita-2.jpg" decoding="async" alt="Torre Vita">
+          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/web/bonanza-1.jpg" data-full="assets/bonanza-1.jpg" decoding="async" alt="Bonanza">
+          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/web/bonanza-2.jpg" data-full="assets/bonanza-2.jpg" decoding="async" alt="Bonanza">
+          <img data-project="Bonanza" data-info="288 apartamentos · Constructora JYP" src="assets/web/bonanza-3.jpg" data-full="assets/bonanza-3.jpg" decoding="async" alt="Bonanza">
+          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/web/entreguaduas-1.jpg" data-full="assets/entreguaduas-1.jpg" decoding="async" alt="Entreguaduas">
+          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/web/entreguaduas-2.jpg" data-full="assets/entreguaduas-2.jpg" decoding="async" alt="Entreguaduas">
+          <img data-project="Entreguaduas" data-info="760 apartamentos · Constructora JYP" src="assets/web/entreguaduas-3.jpg" data-full="assets/entreguaduas-3.jpg" decoding="async" alt="Entreguaduas">
         </div>
       </div>
       <div class="dev-caption reveal" id="devCaption">
@@ -1257,7 +1271,7 @@
       if(!currentImages.length) return;
       currentIndex = (index + currentImages.length) % currentImages.length;
       var img = currentImages[currentIndex];
-      lightboxImg.src = img.src;
+      lightboxImg.src = img.dataset.full || img.src; // la vista ampliada usa la foto original
       lightboxImg.alt = img.alt;
       counter.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
       titleEl.textContent = img.dataset.project || img.alt || '';
@@ -1531,12 +1545,15 @@
       render(false);
       lifted.forEach(function(el){ el.style.zIndex = 30; });
       clearTimeout(settle);
+      // Al terminar (con margen sobre los 0,9 s de la transición): solo se
+      // recoloca sin animación si quedó en un clon; si no, se vuelve a pintar
+      // con transición para no cortar el final del movimiento.
       settle = setTimeout(function(){
         lifted = [];
-        if(activeIndex >= PRE + n) activeIndex -= n;
-        else if(activeIndex < PRE) activeIndex += n;
-        render(true);
-      }, 900);
+        if(activeIndex >= PRE + n){ activeIndex -= n; render(true); }
+        else if(activeIndex < PRE){ activeIndex += n; render(true); }
+        else render(false);
+      }, 1000);
     }
     function tick(){
       if(window.__carPause && window.__carPause.mega) return;
@@ -1663,12 +1680,15 @@
       render(false);
       lifted.forEach(function(el){ el.style.zIndex = 30; });
       clearTimeout(settle);
+      // Al terminar (con margen sobre los 0,9 s de la transición): solo se
+      // recoloca sin animación si quedó en un clon; si no, se vuelve a pintar
+      // con transición para no cortar el final del movimiento.
       settle = setTimeout(function(){
         lifted = [];
-        if(activeIndex >= PRE + n) activeIndex -= n;
-        else if(activeIndex < PRE) activeIndex += n;
-        render(true);
-      }, 900);
+        if(activeIndex >= PRE + n){ activeIndex -= n; render(true); }
+        else if(activeIndex < PRE){ activeIndex += n; render(true); }
+        else render(false);
+      }, 1000);
     }
     function devTick(){
       if(window.__carPause && window.__carPause.dev) return;
@@ -1810,15 +1830,20 @@
     var imgs = document.querySelectorAll('#heroBg .hero-bg-img');
     if(!imgs.length) return;
     var i = 0;
-    function show(index){
-      imgs.forEach(function(img, idx){ img.classList.toggle('active', idx === index); });
+    imgs[0].classList.add('active');
+    function next(){
+      var prev = imgs[i], k = (i + 1) % imgs.length, inc = imgs[k];
+      // Decodificar antes de mostrar: nunca aparece una foto a medio cargar.
+      var ready = inc.decode ? inc.decode().catch(function(){}) : Promise.resolve();
+      ready.then(function(){
+        i = k;
+        prev.classList.add('leaving');           // queda opaca debajo
+        inc.classList.add('active');             // la nueva aparece encima
+        setTimeout(function(){ prev.classList.remove('active', 'leaving'); }, 1200);
+      });
     }
-    show(0);
     if(imgs.length > 1 && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
-      setInterval(function(){
-        i = (i + 1) % imgs.length;
-        show(i);
-      }, 3000);
+      setInterval(function(){ if(!document.hidden) next(); }, 3000);
     }
   })();
 </script>
@@ -1948,7 +1973,14 @@
       }
       function step(dir){ var cur = Math.round(offset / H) % N; goTo((cur + dir + N) % N, dir); }
 
+      // Fuera de pantalla el teleprompter no calcula nada: libera el
+      // navegador para que los carruseles se muevan fluidos.
+      var onScreen = true;
+      if('IntersectionObserver' in window){
+        new IntersectionObserver(function(en){ onScreen = en[0].isIntersecting; }).observe(root);
+      }
       function frame(now){
+        if(!onScreen){ last = 0; requestAnimationFrame(frame); return; }
         var dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
         last = now;
         if(tween){
