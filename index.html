@@ -102,10 +102,22 @@
     .brand-sep{ display:none; }
     .brand-text .brand-arq{ flex-basis:100%; text-align:center; font-size:12px; }
   }
+  .brand-text .arq-short{ display:none; }
+  /* Celular: el nombre abreviado (Montoya U.) cabe en una sola línea */
   @media (max-width:480px){
     .brand-text{ min-width:0; }
-    .brand-text .brand-arq{ white-space:normal; line-height:1.2; }
+    .brand-text .brand-arq{ white-space:nowrap; }
+    .brand-text .brand-arq .arq-full{ display:none; }
+    .brand-text .brand-arq .arq-short{ display:inline; }
   }
+  /* Celulares angostos: menos margen y espacio entre logo, nombre y botones
+     para que "Arq. Reinaldo Montoya U." no toque Contáctanos */
+  @media (max-width:400px){
+    .nav .wrap{ padding:0 14px; gap:6px; }
+    .nav-right{ gap:6px; }
+    .nav-cta{ padding-left:8px !important; padding-right:8px !important; }
+  }
+  @media (max-width:370px){ .brand-text .brand-arq{ letter-spacing:-.02em; } }
   .nav-right{ display:flex; align-items:center; gap:36px; justify-self:end; }
   nav.links{ display:flex; align-items:center; gap:36px; flex:0 0 auto; }
   nav.links a{
@@ -965,7 +977,7 @@
 <header class="nav" id="top">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="Avanti Proyectos, ir al inicio"><img src="assets/logo-white.webp" alt="" width="36" height="36"></a>
-    <span class="brand-text"><b>Avanti</b><span>Proyectos</span><i class="brand-sep" aria-hidden="true"></i><span class="brand-arq">Arq. Reinaldo Montoya Umaña</span></span>
+    <span class="brand-text"><b>Avanti</b><span>Proyectos</span><i class="brand-sep" aria-hidden="true"></i><span class="brand-arq" aria-label="Arq. Reinaldo Montoya Umaña">Arq. Reinaldo Montoya <span class="arq-full" aria-hidden="true">Umaña</span><span class="arq-short" aria-hidden="true">U.</span></span></span>
     <div class="nav-right">
       <nav class="links" id="navLinks" aria-label="Secciones">
         <a href="#proyectos">Proyectos</a>
