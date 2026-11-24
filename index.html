@@ -1701,11 +1701,10 @@
     //  - tocar una foto lateral (la que asoma) va hacia ella;
     //  - tocar la foto activa la amplía;
     //  - al tocar, la rotación se detiene y se reanuda tras 10 s sin uso;
-    //  - con el puntero encima o el foco dentro, también se detiene;
+    //  - con el foco de teclado dentro se detiene (el puntero encima no);
     //  - teclado: flechas izquierda/derecha con el foco en el carrusel.
     // Si el sistema pide movimiento reducido, no hay rotación automática.
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
     var IDLE_MS = 10000, SWIPE_PX = 40, SWIPE_VEL = 0.11;
     window.__carPause = { mega: reduce, dev: reduce };
     [['mega','megaGallery'],['dev','devGallery']].forEach(function(c){
@@ -1767,11 +1766,12 @@
         }, 950);
       });
 
-      if(canHover){
-        band.addEventListener('mouseenter', function(){ hover = true; sync(); });
-        band.addEventListener('mouseleave', function(){ hover = false; sync(); });
-      }
-      band.addEventListener('focusin', function(){ hover = true; sync(); });
+      // El puntero encima ya NO detiene la rotación (en PC sigue animando).
+      // Solo el foco de teclado la detiene, para poder leer y usar flechas.
+      band.addEventListener('focusin', function(e){
+        var kb = true; try{ kb = e.target.matches(':focus-visible'); }catch(err){}
+        hover = kb; sync();
+      });
       band.addEventListener('focusout', function(){ hover = false; sync(); });
       sync();
     });
