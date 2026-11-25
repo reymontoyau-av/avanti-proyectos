@@ -182,7 +182,9 @@ nav.top button[aria-current="true"]{color:#fff}
 .dark .gctrl .ib{color:#fff;border-color:rgba(211,211,215,.3)}
 .gbar{flex:1;height:1px;background:rgba(84,90,96,.25);position:relative}
 .dark .gbar{background:rgba(211,211,215,.2)}
-.gbar i{position:absolute;left:0;top:-1px;height:3px;width:0;background:var(--oro)}
+.gbar i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--oro)}
+/* Líneas de tiempo lo más finas posible: 1 píxel físico en pantallas de alta densidad */
+@media (min-resolution:2dppx){ .gbar,.gbar i,.chap-tab::after,.chap-tab i{height:.5px} }
 .gcount{font-size:12.5px;min-width:56px;text-align:center;font-variant-numeric:tabular-nums;color:var(--acero)}
 .dark .gcount{color:var(--slate)}
 .gplay .pl{display:none}.gplay[aria-pressed="true"] .pl{display:block}.gplay[aria-pressed="true"] .ps{display:none}
@@ -635,15 +637,18 @@ function makeGal(key, list, pair){
   GALS[key]=g;
   wrap.querySelector('.gp').onclick=()=>gMove(g,-1);
   wrap.querySelector('.gn').onclick=()=>gMove(g,1);
-  const pl=wrap.querySelector('.gplay'); pl.onclick=()=>{ g.playing=!g.playing; pl.setAttribute('aria-pressed',!g.playing); pl.setAttribute('aria-label',g.playing?'Pausar avance automático':'Reanudar avance automático'); gBar(g); };
+  const pl=wrap.querySelector('.gplay');
+  g.setPlay=on=>{ g.playing=on; pl.setAttribute('aria-pressed',!on); pl.setAttribute('aria-label',on?'Pausar avance automático':'Reanudar avance automático'); gBar(g); };
+  pl.onclick=()=>g.setPlay(!g.playing);
   let x0=null, moved=false;
   g.gal.addEventListener('pointerdown',e=>{ x0=e.clientX; moved=false; g.gal.classList.add('drag'); });
   g.gal.addEventListener('pointermove',e=>{ if(x0!==null && Math.abs(e.clientX-x0)>8) moved=true; });
   window.addEventListener('pointerup',e=>{ if(x0===null) return; const dx=e.clientX-x0; x0=null; g.gal.classList.remove('drag'); if(Math.abs(dx)>40) gMove(g, dx<0?1:-1); });
+  // Posicionarse encima NO detiene el carrusel; un clic en las fotos sí
+  // (se reanuda con el botón de reproducir).
   g.gal.addEventListener('click',e=>{ if(moved) return; const b=e.target.closest('.gi'); if(!b) return; const i=+b.dataset.i;
+    g.playing=false; g.setPlay(false);
     const d=circ(i-g.act,g.items.length); if(d===0 || (g.pair && d===1)) openFicha(g.items[i].p.s, g.items[i].k); else gTo(g,i); });
-  g.gal.addEventListener('mouseenter',()=>{ clearTimeout(g.timer); g.bar.style.transition='none'; g.bar.style.width=getComputedStyle(g.bar).width; });
-  g.gal.addEventListener('mouseleave',()=>gBar(g));
   return g;
 }
 function circ(d,N){ d=((d%N)+N)%N; if(d>N/2) d-=N; return d; }
