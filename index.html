@@ -81,11 +81,17 @@ nav.top button[aria-current="true"]{color:#fff}
 .sec > *{position:relative;z-index:2}
 /* retícula urbana: sin desvanecido, visible por igual en toda la sección */
 .contours{position:absolute!important;inset:0;width:100%;height:100%;z-index:1!important;pointer-events:none;}
-.contours path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;opacity:.6} /* transparencia general de la retícula (se suma a la de cada sección) */
-.contours.on-dark path{opacity:.4} /* sobre azul noche, un poco más transparente */
+.contours path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;opacity:.45} /* transparencia general de la retícula (se suma a la de cada sección) */
+.contours.on-dark path{opacity:.3} /* sobre azul noche, un poco más transparente */
 .contours .st-c{stroke-width:.6}.contours .st-b{stroke-width:1}.contours .st-a{stroke-width:1.6}
 .on-dark .st-c{stroke:rgba(211,211,215,.2)}.on-dark .st-b{stroke:rgba(211,211,215,.34)}.on-dark .st-a{stroke:rgba(236,190,122,.6)}
 .on-light .st-c{stroke:rgba(84,90,96,.2)}.on-light .st-b{stroke:rgba(84,90,96,.32)}.on-light .st-a{stroke:rgba(184,135,62,.55)}
+/* sitios marcados sobre la retícula: punto sutil + destello suave e independiente en cada uno */
+.contours .spot{fill:var(--sp);opacity:.38;transform-box:fill-box;transform-origin:center;animation:spotDot var(--t,9s) ease-in-out var(--sd,0s) infinite}
+.contours .halo{fill:none;stroke:var(--sp);stroke-width:1;vector-effect:non-scaling-stroke;opacity:0;transform-box:fill-box;transform-origin:center;animation:spotHalo var(--t,9s) cubic-bezier(.16,1,.3,1) var(--sd,0s) infinite}
+.on-dark{--sp:#ECBE7A}.on-light{--sp:#B8873E}
+@keyframes spotDot{0%,62%,100%{opacity:.38}74%{opacity:.72}86%{opacity:.45}}
+@keyframes spotHalo{0%,62%{opacity:0;transform:scale(1)}68%{opacity:.4}92%,100%{opacity:0;transform:scale(4.2)}}
 
 /* encabezado de sección (como el sitio actual: número grande + etiqueta + título) */
 .sec-head{display:flex;align-items:center;gap:18px;padding-bottom:10px;margin-bottom:clamp(10px,2vh,20px);border-bottom:1px solid rgba(84,90,96,.22);flex:none;position:relative}
@@ -248,7 +254,8 @@ nav.top button[aria-current="true"]{color:#fff}
 .foot-logo .mk{height:40px;width:auto}
 .foot-logo .wd{height:20px;width:auto}
 .foot-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(211,211,215,.18);font-size:12.5px;color:var(--slate)}
-.ig{display:inline-flex!important;align-items:center;gap:8px}
+.ig{display:flex!important;width:fit-content;align-items:center;gap:8px}
+.btn-wa{gap:10px}.btn-wa .wa-ic{flex:none}
 
 /* ---------- Foto a pantalla completa con pie animado ---------- */
 .viewer{position:fixed;inset:0;z-index:80;background:#05080f;display:none;align-items:center;justify-content:center;cursor:zoom-out;touch-action:pan-y}
@@ -383,6 +390,7 @@ nav.top button[aria-current="true"]{color:#fff}
   .rise,.rise-img,.cta-mark{opacity:1!important;transform:none!important}
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
   .mq-in{animation:none}
+  .contours .spot{animation:none!important;opacity:.45}.contours .halo{display:none}
 }
 </style>
 </head>
@@ -492,7 +500,7 @@ nav.top button[aria-current="true"]{color:#fff}
     <div class="cta-grid">
       <span class="cta-mark" aria-hidden="true"></span>
       <div><h2>¿Tienes un lote o un proyecto en mente?</h2><p class="rise" style="--dl:.75s">Cuéntanos en qué etapa estás y conversemos sobre cómo desarrollarlo.</p></div>
-      <a href="mailto:contacto@avantiproyectos.com" class="btn-primary rise" style="--dl:.9s">contacto@avantiproyectos.com</a>
+      <a href="https://wa.me/573106432512?text=Hola%2C%20quiero%20conversar%20sobre%20mi%20proyecto" target="_blank" rel="noopener" class="btn-primary btn-wa rise" style="--dl:.9s" aria-label="Contáctanos por WhatsApp"><svg class="wa-ic" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.55 2 2.1 6.45 2.1 11.94c0 1.75.46 3.46 1.33 4.97L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.49 0 9.94-4.45 9.94-9.94A9.88 9.88 0 0 0 12.04 2Zm0 18.16h-.01a8.23 8.23 0 0 1-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.26-8.24a8.23 8.23 0 0 1 8.24 8.25c0 4.55-3.7 8.21-8.24 8.21Zm4.52-6.16c-.25-.12-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.22-.16-.47-.29Z"/></svg>Contáctanos</a>
     </div>
     <div>
       <div class="foot-grid">
@@ -502,8 +510,8 @@ nav.top button[aria-current="true"]{color:#fff}
         </div>
         <div class="rise" style="--dl:1.1s">
           <h4>Contacto</h4>
-          <a href="mailto:contacto@avantiproyectos.com">contacto@avantiproyectos.com</a>
           <a href="tel:+573106432512">310 643 25 12</a>
+          <a href="https://wa.me/573106432512?text=Hola%2C%20quiero%20conversar%20sobre%20mi%20proyecto" target="_blank" rel="noopener" class="ig"><svg class="wa-ic" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.55 2 2.1 6.45 2.1 11.94c0 1.75.46 3.46 1.33 4.97L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.49 0 9.94-4.45 9.94-9.94A9.88 9.88 0 0 0 12.04 2Zm0 18.16h-.01a8.23 8.23 0 0 1-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.26-8.24a8.23 8.23 0 0 1 8.24 8.25c0 4.55-3.7 8.21-8.24 8.21Zm4.52-6.16c-.25-.12-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.25 3.74.59.26 1.05.41 1.41.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.22-.16-.47-.29Z"/></svg>WhatsApp</a>
           <a href="https://www.instagram.com/avantiproyectos/" target="_blank" rel="noopener" class="ig"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/></svg>Instagram</a>
           <p class="who">Arq. Reinaldo Montoya Umaña</p>
           <a href="mailto:rey.montoya.u@gmail.com">rey.montoya.u@gmail.com</a>
@@ -546,12 +554,16 @@ const PROJECTS = [
 ];
 const CLIENTS = [{n:'Constructora Olize',f:'olize',h:1.15},{n:'Pranha Urbano',f:'pranha-urbano',h:.7},{n:'Constructora Berlín',f:'berlin',h:.9},{n:'Constructora JYP',f:'jyp',h:1},{n:'Quatrum',f:'quatrum',h:.9},{n:'Confort 80 Inversiones',f:'confort80',h:1},{n:'Perfek Constructora',f:'perfek',h:1.35},{n:'Hungría Constructora',f:'hungria',h:1.5},{n:'Bello Horizonte',f:'bello-horizonte',h:1.2},{n:'EG&D Constructora',f:'egd',h:.95},{n:'Millán & Asociados',f:'millan',h:.85},{n:'Trano S.A.S.',f:'trano',h:1.15}];
 const LOGOS = {"olize": "assets/clientes/olize.png", "pranha-urbano": "assets/clientes/pranha-urbano.png", "berlin": "assets/clientes/berlin.png", "jyp": "assets/clientes/jyp.png", "quatrum": "assets/clientes/quatrum.png", "confort80": "assets/clientes/confort80.png", "perfek": "assets/clientes/perfek.png", "hungria": "assets/clientes/hungria.png", "bello-horizonte": "assets/clientes/bello-horizonte.png", "egd": "assets/clientes/egd.png", "millan": "assets/clientes/millan.png", "trano": "assets/clientes/trano.png"};
+/* Sitios marcados (coordenadas proyectadas a la retícula 1600×1000) */
+const SPOTS = [[1401.5,910.7],[560.9,299.5],[566.2,245.9],[1021.4,1079.2],[554.6,555.1],[1049.6,430.6],[1369.0,704.8],[1150.5,739.1],[1340.6,453.0],[355.2,276.0],[1115.1,573.3],[1182.2,499.8],[822.1,959.5],[1055.8,536.9],[479.9,164.4],[1118.8,576.0],[536.3,145.6],[808.5,438.3],[779.0,891.1],[1195.3,358.9],[469.9,160.0],[850.7,728.5],[1372.1,555.2],[1408.8,658.1],[1519.9,646.1],[1536.5,589.1],[299.1,416.1],[502.6,431.0],[1126.9,557.5],[819.2,366.1],[978.5,440.0],[533.0,243.0],[614.3,342.0],[560.7,314.5],[535.4,171.1],[561.6,287.4],[604.5,288.7],[634.8,296.3],[1275.1,518.6],[912.8,1024.5],[1173.1,512.7],[770.7,1210.2],[567.1,449.4],[1360.8,827.2],[1403.5,704.5],[1313.1,436.7]];
 const $ = s => document.querySelector(s);
 
 /* ===== Retícula urbana de Manizales (OpenStreetMap): solo líneas, fondo transparente ===== */
 document.querySelectorAll('.contours').forEach(svg=>{
   const dr = svg.dataset.c ? 'draw' : '';
-  svg.innerHTML = ['c','b','a'].map((k,i)=>`<path class="st-${k} ${dr}" pathLength="1" style="--d:${3.2-i*.4}s;--dl:${.2+i*.25}s" d="${STREETS[k]}"/>`).join('');
+  svg.innerHTML = ['c','b','a'].map((k,i)=>`<path class="st-${k} ${dr}" pathLength="1" style="--d:${3.2-i*.4}s;--dl:${.2+i*.25}s" d="${STREETS[k]}"/>`).join('')
+    + '<g class="spots">' + SPOTS.map(([x,y],i)=>{ const t=(7+((i*37)%50)/10).toFixed(1), d=(-((i*53)%97)/10).toFixed(1);
+      return `<g style="--t:${t}s;--sd:${d}s"><circle class="halo" cx="${x}" cy="${y}" r="2.6"/><circle class="spot" cx="${x}" cy="${y}" r="2.6"/></g>`; }).join('') + '</g>';
 });
 
 /* ===== Inicio: fondo de fotos (fundido + acercamiento lento, como el original) ===== */
