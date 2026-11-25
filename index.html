@@ -81,7 +81,7 @@ nav.top button[aria-current="true"]{color:#fff}
 .sec > *{position:relative;z-index:2}
 /* retícula urbana: sin desvanecido, visible por igual en toda la sección */
 .contours{position:absolute!important;inset:0;width:100%;height:100%;z-index:1!important;pointer-events:none;}
-.contours path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.contours path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;opacity:.6} /* transparencia general de la retícula (se suma a la de cada sección) */
 .contours .st-c{stroke-width:.6}.contours .st-b{stroke-width:1}.contours .st-a{stroke-width:1.6}
 .on-dark .st-c{stroke:rgba(211,211,215,.2)}.on-dark .st-b{stroke:rgba(211,211,215,.34)}.on-dark .st-a{stroke:rgba(236,190,122,.6)}
 .on-light .st-c{stroke:rgba(84,90,96,.2)}.on-light .st-b{stroke:rgba(84,90,96,.32)}.on-light .st-a{stroke:rgba(184,135,62,.55)}
